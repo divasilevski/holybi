@@ -19,7 +19,7 @@ io.on("connection", socket => {
 
 app.use("/", serveStatic(path.join(__dirname, "/dist")));
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 http.listen(port, () => {
   console.log(`Server running at port: ${port}`);
 });
