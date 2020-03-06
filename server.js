@@ -1,6 +1,9 @@
 let app = require("express")();
-let http = require("http").Server(app);
+let http = require("http").createServer(app);
 let io = require("socket.io")(http);
+
+const serveStatic = require("serve-static");
+const path = require("path");
 
 io.on("connection", socket => {
   //
@@ -14,11 +17,9 @@ io.on("connection", socket => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+app.use("/", serveStatic(path.join(__dirname, "/dist")));
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 http.listen(port, () => {
   console.log(`Server running at port: ${port}`);
 });
