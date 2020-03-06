@@ -12,7 +12,7 @@
 import io from "socket.io-client";
 export default {
   data: () => ({
-    socket: io(`:${process.env.PORT || 3000}`)
+    socket: io('http://localhost:3000')
   }),
   created() {
     this.socket.on("connected", str => {
