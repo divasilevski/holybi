@@ -4,9 +4,27 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
+
+<script>
+import io from "socket.io-client";
+export default {
+  data: () => ({
+    socket: io(`:${process.env.PORT || 3000}`)
+  }),
+  created() {
+    this.socket.on("connected", str => {
+      console.log(str);
+    });
+
+    this.socket.on("disconnected", str => {
+      console.log(str);
+    });
+  }
+};
+</script>
 
 <style lang="scss">
 #app {
