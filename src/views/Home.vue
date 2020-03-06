@@ -1,39 +1,28 @@
 <template>
   <v-container class="fill-height justify-center">
-    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent>
-      <v-text-field
-        v-model="room_id"
-        class="ma-5"
-        label="Комната"
-        :rules="rules"
-        hide-details="auto"
-        v-on:keyup.enter="clickEnter"
-        required
-      ></v-text-field>
+    <Loading v-if="mode === 'loading'" />
 
-      <v-btn class="ma-5" @click="clickEnter">Войти в комнату</v-btn>
-    </v-form>
+    <Start v-else-if="mode === 'start'" />
+
+    <Room v-else-if="mode === 'room'" />
   </v-container>
 </template>
 
 <script>
+import Loading from "../components/Loading";
+import Start from "../components/Start";
+import Room from "../components/Room";
+
 export default {
   name: "Home",
   data: () => ({
-    valid: true,
-    room_id: "",
-    rules: [
-      v => !!v || "Придумайте id для комнаты",
-      v => (v && v.length <= 10) || "id превышет 10 символов"
-    ]
+    mode: "room"
   }),
-  methods: {
-    clickEnter() {
-      if (this.$refs.form.validate()) {
-        console.log(`Вход в комнату ${this.room_id}`);
-      }
-    }
-  },
-  components: {}
+
+  components: {
+    Loading,
+    Start,
+    Room
+  }
 };
 </script>
