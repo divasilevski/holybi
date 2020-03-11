@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     checkResize() {
-      this.chat_height = `height: ${window.innerHeight - 170}px;`;
+      this.chat_height = `height: ${window.innerHeight - 150}px;`;
     }
   },
   computed: {}

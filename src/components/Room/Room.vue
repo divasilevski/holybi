@@ -14,6 +14,7 @@
       </v-toolbar-title>
 
       <v-btn
+        v-if="this.bot_nav"
         @click="
           bot_nav_board = true;
           bot_nav_chat = false;
@@ -22,6 +23,7 @@
         <span>B</span>
       </v-btn>
       <v-btn
+        v-if="this.bot_nav"
         @click="
           bot_nav_board = false;
           bot_nav_chat = true;
@@ -32,7 +34,7 @@
 
       <v-spacer />
 
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon @click.prevent="drawer = !drawer" />
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app clipped right>
@@ -45,13 +47,15 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-content>
-      <v-container>
-        <v-row>
-          <v-col v-if="bot_nav_board" cols="12" md="5" sm="6" class="pt-0">
-            <RoomBoard />
+    <v-content v-resize="checkResize">
+      <v-container class="pb-0 pt-0">
+        <v-row class="d-flex justify-center">
+          <v-col v-if="bot_nav_board" cols="12" md="7" sm="7" class="pb-0 pt-0">
+            <div class="d-flex justify-center">
+              <RoomBoard />
+            </div>
           </v-col>
-          <v-col v-if="bot_nav_chat" cols="12" md="6" sm="6" class="pt-0">
+          <v-col v-if="bot_nav_chat" cols="12" md="5" sm="5" class="pb-0 pt-0">
             <div class="d-flex justify-center">
               <RoomChat />
             </div>
@@ -75,20 +79,22 @@ export default {
     bot_nav_board: true,
     bot_nav_chat: false
   }),
-  // computed: {
-  //   screenResize() {
-  //     console.log("dsdsds")
-  //     if (screen.width > 425) {
-  //       this.bot_nav = false;
-  //       this.bot_nav_board = true;
-  //       this.bot_nav_chat = true;
-  //     } else {
-  //       this.bot_nav = true;
-  //       this.bot_nav_board = true;
-  //       this.bot_nav_chat = false;
-  //     }
-  //   }
-  // },
+  mounted() {
+    this.checkResize();
+  },
+  methods: {
+    checkResize() {
+      if (window.innerWidth > 650) {
+        this.bot_nav = false;
+        this.bot_nav_board = true;
+        this.bot_nav_chat = true;
+      } else {
+        this.bot_nav = true;
+        this.bot_nav_board = true;
+        this.bot_nav_chat = false;
+      }
+    }
+  },
   components: {
     RoomBoard,
     RoomChat
