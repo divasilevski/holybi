@@ -29,6 +29,7 @@ export default {
     clickEnter() {
       if (this.$refs.form.validate()) {
         this.$router.push(`/?id=${this.room_id}`);
+        this.$store.commit("setMode", "Room")
         console.log(`Вход в комнату ${this.room_id}`);
       }
     }
