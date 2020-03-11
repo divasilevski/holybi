@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <div>
     <v-card
       style="max-height: 430px; max-width: 350px;"
       class="overflow-y-auto"
@@ -74,18 +74,13 @@
       </v-container>
 
       <v-container class="d-flex justify-left pa-0">
-        <v-chip x-small color="white"
-          >Голубь Инокентий печатает...</v-chip
-        >
+        <v-chip x-small color="white">Голубь Инокентий печатает...</v-chip>
       </v-container>
       <v-container class="d-flex justify-left pa-0">
-        <v-chip x-small color="white"
-          >Картофель Иван печатает...</v-chip
-        >
+        <v-chip x-small color="white">Картофель Иван печатает...</v-chip>
       </v-container>
-      
     </v-card>
-    <v-form class="pt-2">
+    <v-form class="pt-2" style="max-width: 350px;">
       <v-container>
         <v-text-field
           dense
@@ -99,7 +94,7 @@
         ></v-text-field>
       </v-container>
     </v-form>
-  </v-container>
+  </div>
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app clipped-right color="white" elevation="0">
+    <v-app-bar app clipped-right color="white" flat>
       <v-btn icon>
         <v-icon>
           mdi-chevron-left
@@ -28,12 +28,26 @@
       </v-list>
     </v-navigation-drawer>
 
-    <Chat />
+    <v-content>
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="6" sm="6" class="pt-0">
+            <RoomBoard />
+          </v-col>
+          <v-col cols="12" md="6" sm="6" class="pt-0">
+            <div class="d-flex justify-center">
+              <RoomChat />
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 
 <script>
-import Chat from "./Chat";
+import RoomBoard from "./RoomBoard";
+import RoomChat from "./RoomChat";
 export default {
   data: () => ({
     name: "Room",
@@ -42,7 +56,8 @@ export default {
     users: []
   }),
   components: {
-    Chat
+    RoomBoard,
+    RoomChat
   }
 };
 </script>

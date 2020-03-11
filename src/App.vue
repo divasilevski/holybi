@@ -1,8 +1,6 @@
 <template>
   <v-app>
-    <v-content>
-      <router-view/>
-    </v-content>
+    <router-view />
   </v-app>
 </template>
 
@@ -10,7 +8,7 @@
 import io from "socket.io-client";
 export default {
   data: () => ({
-    socket: io('http://localhost:3000')
+    socket: io("http://localhost:3000")
   }),
   created() {
     this.socket.on("connected", str => {
@@ -22,5 +20,4 @@ export default {
     });
   }
 };
-
 </script>
