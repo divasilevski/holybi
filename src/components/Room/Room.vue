@@ -1,40 +1,48 @@
 <template>
   <v-app>
     <v-app-bar app clipped-right color="white" flat>
-      <v-btn icon>
-        <v-icon>
-          mdi-chevron-left
-        </v-icon>
-      </v-btn>
-
-      <v-toolbar-title class="mr-12 align-center">
-        <span class="title">
-          HOLYBI ROOM
-        </span>
-      </v-toolbar-title>
-
       <v-btn
-        v-if="this.bot_nav"
+        icon
+        v-if="!bot_nav_board"
         @click="
           bot_nav_board = true;
           bot_nav_chat = false;
         "
       >
-        <span>B</span>
+        <v-icon>
+          mdi-chevron-left
+        </v-icon>
       </v-btn>
+
+      <v-toolbar-title class="pl-0 align-center">
+        <span class="title">HOLYBI ROOM</span>
+      </v-toolbar-title>
+
+      <v-btn icon>
+        <v-icon small>
+          mdi-content-copy
+        </v-icon>
+      </v-btn>
+
+      <v-spacer />
+
       <v-btn
-        v-if="this.bot_nav"
+        icon
+        v-if="bot_nav && bot_nav_board"
         @click="
           bot_nav_board = false;
           bot_nav_chat = true;
         "
       >
-        <span>C</span>
+        <v-icon>
+          mdi-message
+        </v-icon>
       </v-btn>
 
-      <v-spacer />
-
-      <v-app-bar-nav-icon @click.prevent="drawer = !drawer" />
+      <v-app-bar-nav-icon
+        v-if="!bot_nav_board || !bot_nav"
+        @click.prevent="drawer = !drawer"
+      />
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app clipped right>
@@ -75,7 +83,7 @@ export default {
     drawer: false,
     user: { name: "Dima" },
     users: [],
-    bot_nav: true,
+    bot_nav: false,
     bot_nav_board: true,
     bot_nav_chat: false
   }),
@@ -84,14 +92,17 @@ export default {
   },
   methods: {
     checkResize() {
-      if (window.innerWidth > 650) {
+      if (window.innerWidth > 820) {
         this.bot_nav = false;
         this.bot_nav_board = true;
         this.bot_nav_chat = true;
       } else {
         this.bot_nav = true;
-        this.bot_nav_board = true;
-        this.bot_nav_chat = false;
+
+        if (this.bot_nav_board && this.bot_nav_chat) {
+          this.bot_nav_board = true;
+          this.bot_nav_chat = false;
+        }
       }
     }
   },
