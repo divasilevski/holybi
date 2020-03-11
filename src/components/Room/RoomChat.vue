@@ -106,20 +106,14 @@ export default {
     chat_height: "height: 0px"
   }),
   mounted() {
-    checkResize();
+    this.checkResize();
   },
   methods: {
     checkResize() {
-      this.chat_height = `height: ${screen.height - 150}px ;`;
+      this.chat_height = `height: ${window.innerHeight - 170}px;`;
     }
   },
-  computed: {
-    screenResize() {
-      console.log("No");
-      console.log(screen.height);
-      return `max-height: ${screen.height - 150}px ;`;
-    }
-  }
+  computed: {}
 };
 </script>
 
