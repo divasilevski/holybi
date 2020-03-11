@@ -13,6 +13,23 @@
         </span>
       </v-toolbar-title>
 
+      <v-btn
+        @click="
+          bot_nav_board = true;
+          bot_nav_chat = false;
+        "
+      >
+        <span>B</span>
+      </v-btn>
+      <v-btn
+        @click="
+          bot_nav_board = false;
+          bot_nav_chat = true;
+        "
+      >
+        <span>C</span>
+      </v-btn>
+
       <v-spacer />
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -31,10 +48,10 @@
     <v-content>
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" sm="6" class="pt-0">
+          <v-col v-if="bot_nav_board" cols="12" md="5" sm="6" class="pt-0">
             <RoomBoard />
           </v-col>
-          <v-col cols="12" md="6" sm="6" class="pt-0">
+          <v-col v-if="bot_nav_chat" cols="12" md="6" sm="6" class="pt-0">
             <div class="d-flex justify-center">
               <RoomChat />
             </div>
@@ -53,8 +70,25 @@ export default {
     name: "Room",
     drawer: false,
     user: { name: "Dima" },
-    users: []
+    users: [],
+    bot_nav: true,
+    bot_nav_board: true,
+    bot_nav_chat: false
   }),
+  // computed: {
+  //   screenResize() {
+  //     console.log("dsdsds")
+  //     if (screen.width > 425) {
+  //       this.bot_nav = false;
+  //       this.bot_nav_board = true;
+  //       this.bot_nav_chat = true;
+  //     } else {
+  //       this.bot_nav = true;
+  //       this.bot_nav_board = true;
+  //       this.bot_nav_chat = false;
+  //     }
+  //   }
+  // },
   components: {
     RoomBoard,
     RoomChat

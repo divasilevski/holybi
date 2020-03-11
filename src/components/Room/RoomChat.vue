@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div v-resize="checkResize">
     <v-card
-      style="max-height: 430px; max-width: 350px;"
+      style="max-width: 370px;"
+      :style="chat_height"
       class="overflow-y-auto"
       elevation="0"
     >
@@ -101,12 +102,24 @@
 export default {
   name: "Chat",
   data: () => ({
-    message: ""
+    message: "",
+    chat_height: "height: 0px"
   }),
-
-  computed: {},
-
-  methods: {}
+  mounted() {
+    checkResize();
+  },
+  methods: {
+    checkResize() {
+      this.chat_height = `height: ${screen.height - 150}px ;`;
+    }
+  },
+  computed: {
+    screenResize() {
+      console.log("No");
+      console.log(screen.height);
+      return `max-height: ${screen.height - 150}px ;`;
+    }
+  }
 };
 </script>
 
