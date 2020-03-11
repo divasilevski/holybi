@@ -1,18 +1,44 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-container v-if="mode === 'Loading'" class="fill-height justify-center">
+      <Loading />
+    </v-container>
+
+    <v-container
+      v-else-if="mode === 'Start'"
+      class="fill-height justify-center"
+    >
+      <Start />
+    </v-container>
+
+    <Room v-else-if="mode === 'Room'" />
+  </v-app>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Loading from "../components/Loading";
+import Start from "../components/Start";
+import Room from "../components/Room/Room";
+
+import { mapState } from "vuex";
 
 export default {
-  name: 'Home',
+  name: "Home",
+
+  beforeCreate() {
+    if (this.$route.query.id) {
+      this.$store.commit("setMode", "Room")
+    }
+  },
+
+  computed: {
+    ...mapState(["mode"])
+  },
+
   components: {
-    HelloWorld
+    Loading,
+    Start,
+    Room
   }
-}
+};
 </script>
