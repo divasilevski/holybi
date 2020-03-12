@@ -29,6 +29,10 @@ export default {
       this.$store.commit("setUser", user);
     });
 
+    this.socket.on("UPDATE_USERS", users => {
+      this.$store.commit("updateUsers", users);
+    });
+
     // // Help emit to find vuex
     // this.socket.on("UPDATE_USERS", users => {
     //   this.$store.commit("SOCKET_UPDATE_USERS", users);
@@ -62,6 +66,7 @@ export default {
           id: this.user.id,
           room: this.user.room
         });
+        this.$store.commit("clearData");
       }
     }
   }

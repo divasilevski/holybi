@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app clipped-right color="white" flat>
       <!-- MENU -->
-      <v-btn icon v-if="!bot_nav_chat || !bot_nav" @click.prevent="setMode">
+      <v-btn icon v-if="!bot_nav_chat || !bot_nav" @click.prevent="back">
         <v-icon>mdi-chevron-double-left</v-icon>
       </v-btn>
 
@@ -20,7 +20,7 @@
         </v-icon>
       </v-btn>
 
-      <v-toolbar-title  class="pl-0 align-center">
+      <v-toolbar-title class="pl-0 align-center">
         <span v-if="bot_nav_board || !bot_nav" class="title">HOLYBI ROOM</span>
         <span v-else class="title">CHAT</span>
       </v-toolbar-title>
@@ -61,9 +61,14 @@
       right
     >
       <v-list dense nav>
-        <v-list-item v-for="user in users" :key="user.id" link>
+        <v-list-item v-for="u in users" :key="u.id" link>
           <v-list-item-content>
-            <v-list-item-title>{{ user.name }}</v-list-item-title>
+            <v-list-item-title
+              >{{ u.name }}
+              <span v-if="user.name === u.name">
+                <v-icon small>mdi-account</v-icon>
+              </span>
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -92,24 +97,24 @@
 import RoomBoard from "./RoomBoard";
 import RoomChat from "./RoomChat";
 
+import { mapState } from "vuex";
+
 export default {
   name: "Room",
   data: () => ({
     hreff: window.location.href,
     drawer: false,
-    user: { name: "Dima" },
-    users: [],
     bot_nav: false,
     bot_nav_board: true,
-    bot_nav_chat: false,
+    bot_nav_chat: false
   }),
   mounted() {
-    
     this.resize();
   },
   methods: {
-    setMode() {
+    back() {
       this.$store.commit("setMode", "Start");
+      this.$router.replace("/");
     },
     resize() {
       if (window.innerWidth > 820) {
@@ -124,6 +129,10 @@ export default {
         }
       }
     }
+  },
+
+  computed: {
+    ...mapState(["user", "users"])
   },
   components: {
     RoomBoard,
