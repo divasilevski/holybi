@@ -62,7 +62,7 @@ export default {
       }
 
       if (this.mode === "Start" && this.user) {
-        this.socket.emit("disconnect", {
+        this.socket.emit("USER_LEAVE", {
           id: this.user.id,
           room: this.user.room
         });
