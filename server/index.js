@@ -5,6 +5,8 @@ let io = require("socket.io")(http);
 const serveStatic = require("serve-static");
 const path = require("path");
 
+const users = require("./users")();
+
 io.on("connection", socket => {
   //
   io.emit("connected", `user with token ${socket.id} connected`);
@@ -17,7 +19,7 @@ io.on("connection", socket => {
   });
 });
 
-app.use("/", serveStatic(path.join(__dirname, "/dist")));
+app.use("/", serveStatic(path.join(__dirname, "../dist")));
 
 const port = process.env.PORT || 3000;
 http.listen(port, "0.0.0.0", () => {

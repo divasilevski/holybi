@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "backend": "nodemon server.js --watch",
-    "start": "node server.js",
+    "backend": "nodemon server/index.js --watch",
+    "start": "node server/index.js",
     "build": "vue-cli-service build"
   },
   "dependencies": {
