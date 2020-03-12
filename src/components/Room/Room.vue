@@ -3,7 +3,7 @@
     <v-app-bar app clipped-right color="white" flat>
       <!-- MENU -->
       <v-btn icon v-if="!bot_nav_chat || !bot_nav" @click.prevent="setMode">
-        <v-icon>mdi-chevron-down</v-icon>
+        <v-icon>mdi-chevron-double-left</v-icon>
       </v-btn>
 
       <!-- BACK -->
@@ -101,9 +101,10 @@ export default {
     users: [],
     bot_nav: false,
     bot_nav_board: true,
-    bot_nav_chat: false
+    bot_nav_chat: false,
   }),
   mounted() {
+    
     this.resize();
   },
   methods: {

@@ -24,13 +24,6 @@ import { mapState } from "vuex";
 
 export default {
   name: "Home",
-
-  beforeCreate() {
-    if (this.$route.query.id) {
-      this.$store.commit("setMode", "Room")
-    }
-  },
-
   computed: {
     ...mapState(["mode"])
   },

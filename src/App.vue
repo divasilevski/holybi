@@ -17,18 +17,23 @@ export default {
   }),
 
   created() {
-    // const user = firebase.auth().currentUser;
-    // this.socket.emit("USER_JOINED", {
-    //   room: this.$route.query.room,
-    //   king: user ? this.$route.query.user === user.uid : false
-    // });
+    // LOAD APP
+    if (window.document.location.search) {
+      this.$store.commit("setMode", "Room");
+    } else {
+      this.$store.commit("setMode", "Start");
+    }
+
+    // SOCKET LISTENING
+    this.socket.on("SET_USER", user => {
+      this.$store.commit("setUser", user);
+    });
+
     // // Help emit to find vuex
     // this.socket.on("UPDATE_USERS", users => {
     //   this.$store.commit("SOCKET_UPDATE_USERS", users);
     // });
-    // this.socket.on("SET_USER", user => {
-    //   this.$store.commit("SOCKET_SET_USER", user);
-    // });
+    //
     // this.socket.on("ACCESS_DENIED", () => {
     //   this.$router.push("/error?message=access_denied");
     // });
@@ -36,25 +41,29 @@ export default {
     //   this.$router.push("/error?message=room_full");
     // });
 
-    this.socket.on("connected", str => {
+    this.socket.on("GET_MESSAGE", str => {
       console.log(str);
-    });
-
-    this.socket.on("disconnected", str => {
-      console.log(str);
-    });
-
-    // Help emit to find vuex
-    this.socket.on("UPDATE_USERS", users => {
-      this.$store.commit("SOCKET_UPDATE_USERS", users);
-    });
-    this.socket.on("SET_USER", user => {
-      this.$store.commit("SOCKET_SET_USER", user);
     });
   },
 
   computed: {
-    ...mapState(["user", "users"])
+    ...mapState(["mode", "user", "users"])
+  },
+
+  watch: {
+    mode() {
+      if (this.mode === "Room") {
+        const room = window.document.location.search.replace("?id=", "");
+        this.socket.emit("USER_JOINED", room);
+      }
+
+      if (this.mode === "Start" && this.user) {
+        this.socket.emit("USER_LEAVE", {
+          id: this.user.id,
+          room: this.user.room
+        });
+      }
+    }
   }
 
   // methods: {
@@ -66,7 +75,6 @@ export default {
   // destroyed() {
   //   this.socket.emit("USER_LEAVE", this.user.id);
   //   this.$store.commit("clearData");
-  // }, 
-
+  // },
 };
 </script>

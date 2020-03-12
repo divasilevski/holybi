@@ -8,13 +8,24 @@ const path = require("path");
 const users = require("./users")();
 
 io.on("connection", socket => {
+  //
+  socket.on("USER_JOINED", room => {
+    socket.emit("GET_MESSAGE", `user ${socket.id} joined to ${room}`);
+    socket.emit("SET_USER", { id: socket.id, room: room });
+  });
+
+  //
+  socket.on("USER_LEAVE", ({ id, room }) => {
+    io.emit("GET_MESSAGE", `user with token ${id} leave room ${room}`);
+  });
+
   // socket.on("USER_JOINED", data => {
   //   // ERRORS
   //   if (users.oneKing(data)) {
   //     socket.emit("ACCESS_DENIED", socket.id);
   //     return;
   //   }
-    
+
   //   if (users.isFull(data.room)) {
   //     socket.emit("ROOM_FULL", socket.id);
   //     return;
@@ -43,12 +54,9 @@ io.on("connection", socket => {
   //   console.log(`socket ${socket.id} disconnected`);
   // });
   //
-  io.emit("connected", `user with token ${socket.id} connected`);
-  console.log(`user with token ${socket.id} connected`);
-
   //
   socket.on("disconnect", () => {
-    io.emit("disconnected", `user with token ${socket.id} disconnected`);
+    io.emit("GET_MESSAGE", `user with token ${socket.id} disconnected`);
     console.log(`user with token ${socket.id} disconnected`);
   });
 });
