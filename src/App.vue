@@ -62,7 +62,7 @@ export default {
       }
 
       if (this.mode === "Start" && this.user) {
-        this.socket.emit("USER_LEAVE", {
+        this.socket.emit("disconnect", {
           id: this.user.id,
           room: this.user.room
         });
@@ -70,16 +70,5 @@ export default {
       }
     }
   }
-
-  // methods: {
-  //   exit() {
-  //     this.socket.emit("USER_LEAVE", this.user.id);
-  //     this.$store.commit("clearData");
-  //   }
-  // },
-  // destroyed() {
-  //   this.socket.emit("USER_LEAVE", this.user.id);
-  //   this.$store.commit("clearData");
-  // },
 };
 </script>

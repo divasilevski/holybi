@@ -23,6 +23,9 @@
       <v-toolbar-title class="pl-0 align-center">
         <span v-if="bot_nav_board || !bot_nav" class="title">HOLYBI ROOM</span>
         <span v-else class="title">CHAT</span>
+        <span v-if="!bot_nav || bot_nav_chat" class="title">
+          | {{ user ? user.name.toUpperCase() : "" }}</span
+        >
       </v-toolbar-title>
 
       <!-- COPY -->
