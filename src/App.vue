@@ -10,14 +10,10 @@ import { mapState } from "vuex";
 
 export default {
   data: () => ({
-<<<<<<< HEAD
-    socket: io(window.origin)
-=======
     socket:
       process.env.NODE_ENV === "production"
         ? io(window.origin)
         : io("localhost:3000")
->>>>>>> master
   }),
 
   created() {
