@@ -7,8 +7,9 @@ class Users {
   }
 
   /** Добавление пользователя */
-  add(data, token) {
-    const room_users = this.getByRoom(data.room);
+  add(token, room) {
+
+    const room_users = this.getByRoom(room);
 
     let category;
 
@@ -27,7 +28,10 @@ class Users {
       if (!room_users.map(e => e.name).includes(name)) break;
     }
 
-    this.users.push({ ...data, id: token, name, category });
+    const u = { id: token, name, category, room, king: !room_users.length};
+
+    this.users.push(u);
+    return u;
   }
 
   /** Удаление пользователя */

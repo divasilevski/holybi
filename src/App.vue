@@ -17,25 +17,58 @@ export default {
   }),
 
   created() {
-    this.socket.on("connected", str => {
-      console.log(str);
-    });
+    // LOAD APP
+    if (window.document.location.search) {
+      this.$store.commit("setMode", "Room");
+    } else {
+      this.$store.commit("setMode", "Start");
+    }
 
-    this.socket.on("disconnected", str => {
-      console.log(str);
-    });
-
-    // Help emit to find vuex
-    this.socket.on("UPDATE_USERS", users => {
-      this.$store.commit("SOCKET_UPDATE_USERS", users);
-    });
+    // SOCKET LISTENING
     this.socket.on("SET_USER", user => {
-      this.$store.commit("SOCKET_SET_USER", user);
+      this.$store.commit("setUser", user);
+    });
+
+    this.socket.on("UPDATE_USERS", users => {
+      this.$store.commit("updateUsers", users);
+    });
+
+    // // Help emit to find vuex
+    // this.socket.on("UPDATE_USERS", users => {
+    //   this.$store.commit("SOCKET_UPDATE_USERS", users);
+    // });
+    //
+    // this.socket.on("ACCESS_DENIED", () => {
+    //   this.$router.push("/error?message=access_denied");
+    // });
+    // this.socket.on("ROOM_FULL", () => {
+    //   this.$router.push("/error?message=room_full");
+    // });
+
+    this.socket.on("GET_MESSAGE", str => {
+      console.log(str);
     });
   },
 
   computed: {
-    ...mapState(["user", "users"])
+    ...mapState(["mode", "user", "users"])
+  },
+
+  watch: {
+    mode() {
+      if (this.mode === "Room") {
+        const room = window.document.location.search.replace("?id=", "");
+        this.socket.emit("USER_JOINED", room);
+      }
+
+      if (this.mode === "Start" && this.user) {
+        this.socket.emit("disconnect", {
+          id: this.user.id,
+          room: this.user.room
+        });
+        this.$store.commit("clearData");
+      }
+    }
   }
 };
 </script>

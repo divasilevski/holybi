@@ -41,7 +41,6 @@ export default {
         this.board_size = `height: ${window.innerHeight -
           140}px; width: ${window.innerHeight - 140}px`;
       } else {
-        console.log(window.innerHeight + "меньше " + window.innerWidth)
         this.board_size = `height: ${window.innerWidth}px; width: ${window.innerWidth}px`;
       }
     }
