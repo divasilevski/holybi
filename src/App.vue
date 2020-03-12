@@ -8,7 +8,7 @@
 import io from "socket.io-client";
 export default {
   data: () => ({
-    socket: io("http://localhost:3000")
+    socket: io(window.origin)
   }),
   created() {
     this.socket.on("connected", str => {
