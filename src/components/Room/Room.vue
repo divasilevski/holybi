@@ -68,6 +68,9 @@
               <span v-if="user.name === u.name">
                 <v-icon small>mdi-account</v-icon>
               </span>
+              <span v-if="u.king">
+                <v-icon small>mdi-crown</v-icon>
+              </span>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
