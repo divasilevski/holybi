@@ -55,7 +55,7 @@
     </v-app-bar>
 
     <v-navigation-drawer
-      disable-resize-watcher="true"
+      disable-resize-watcher
       v-model="drawer"
       app
       clipped
