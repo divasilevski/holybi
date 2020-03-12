@@ -20,15 +20,14 @@
         </v-icon>
       </v-btn>
 
-      <v-toolbar-title class="pl-0 align-center">
-        <span class="title">HOLYBI ROOM</span>
+      <v-toolbar-title  class="pl-0 align-center">
+        <span v-if="bot_nav_board || !bot_nav" class="title">HOLYBI ROOM</span>
+        <span v-else class="title">CHAT</span>
       </v-toolbar-title>
 
       <!-- COPY -->
-      <v-btn icon>
-        <v-icon small>
-          mdi-content-copy
-        </v-icon>
+      <v-btn icon v-if="bot_nav_board || !bot_nav" v-clipboard="hreff">
+        <v-icon small>mdi-content-copy</v-icon>
       </v-btn>
 
       <v-spacer />
@@ -94,8 +93,9 @@ import RoomBoard from "./RoomBoard";
 import RoomChat from "./RoomChat";
 
 export default {
+  name: "Room",
   data: () => ({
-    name: "Room",
+    hreff: window.location.href,
     drawer: false,
     user: { name: "Dima" },
     users: [],

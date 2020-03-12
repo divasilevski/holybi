@@ -17,6 +17,25 @@ export default {
   }),
 
   created() {
+    // const user = firebase.auth().currentUser;
+    // this.socket.emit("USER_JOINED", {
+    //   room: this.$route.query.room,
+    //   king: user ? this.$route.query.user === user.uid : false
+    // });
+    // // Help emit to find vuex
+    // this.socket.on("UPDATE_USERS", users => {
+    //   this.$store.commit("SOCKET_UPDATE_USERS", users);
+    // });
+    // this.socket.on("SET_USER", user => {
+    //   this.$store.commit("SOCKET_SET_USER", user);
+    // });
+    // this.socket.on("ACCESS_DENIED", () => {
+    //   this.$router.push("/error?message=access_denied");
+    // });
+    // this.socket.on("ROOM_FULL", () => {
+    //   this.$router.push("/error?message=room_full");
+    // });
+
     this.socket.on("connected", str => {
       console.log(str);
     });
@@ -37,5 +56,17 @@ export default {
   computed: {
     ...mapState(["user", "users"])
   }
+
+  // methods: {
+  //   exit() {
+  //     this.socket.emit("USER_LEAVE", this.user.id);
+  //     this.$store.commit("clearData");
+  //   }
+  // },
+  // destroyed() {
+  //   this.socket.emit("USER_LEAVE", this.user.id);
+  //   this.$store.commit("clearData");
+  // }, 
+
 };
 </script>
