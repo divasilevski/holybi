@@ -18,6 +18,24 @@ io.on("connection", socket => {
   });
 
   //
+  socket.on("USER_LEAVE", () => {
+    const user = users.remove(socket.id);
+    if (user) {
+      const room_users = users.getByRoom(user.room);
+      if (room_users.length) {
+        // 1
+        if (user.king) {
+          room_users[0].king = true;
+          io.to(room_users[0].id).emit("SET_USER", room_users[0]);
+        }
+
+        // 2
+        io.to(user.room).emit("UPDATE_USERS", room_users);
+      }
+    }
+  });
+
+  //
   socket.on("disconnect", () => {
     const user = users.remove(socket.id);
     if (user) {
