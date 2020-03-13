@@ -33,6 +33,10 @@ export default {
       this.$store.commit("updateUsers", users);
     });
 
+    this.socket.on("UPDATE_MESSAGES", messages => {
+      this.$store.commit("updateMessages", messages);
+    });
+
     // // Help emit to find vuex
     // this.socket.on("UPDATE_USERS", users => {
     //   this.$store.commit("SOCKET_UPDATE_USERS", users);

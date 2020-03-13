@@ -40,7 +40,7 @@
           </v-card>
         </v-container>
 
-        <v-container v-else class="d-flex justify-center pa-0">
+        <v-container v-else class="d-flex justify-center pa-1">
           <v-chip small color="blue-grey lighten-5">{{ m.message }}</v-chip>
         </v-container>
       </div>
@@ -69,65 +69,61 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "Chat",
   data: () => ({
     message: "",
     chat_height: "height: 0px",
-    user: {
-      name: "Песик",
-      id: "12345"
-    },
     typing: [
       { author: "Голубь Инокентий", id: "" },
       { author: "Енот", id: "" },
       { author: "Пёсик", id: "12345" }
-    ],
-    messages: [
-      {
-        type: "user",
-        author: "Голубь Инокентий",
-        id: "",
-        message: "Я голубь, а ты никто"
-      },
-      {
-        type: "user",
-        author: "Пёсик",
-        id: "12345",
-        message: "Я вообще то безумец, каких ещё поискать. Наглец ты эдакий."
-      },
-      {
-        type: "user",
-        author: "Енот",
-        id: "",
-        message: "Вот же вы дурачки"
-      },
-      {
-        type: "admin",
-        author: "",
-        id: "",
-        message: "Картофель Иван подключился"
-      },
-      {
-        type: "user",
-        author: "Пёсик",
-        id: "12345",
-        message: "Тоже мне аналитики нашлись. Привет!"
-      },
-      {
-        type: "user",
-        author: "Голубь Инокентий",
-        id: "",
-        message: "Я голубь, а ты никто"
-      }
     ]
+    // messages: [
+    //   {
+    //     type: "user",
+    //     author: "Голубь Инокентий",
+    //     id: "",
+    //     message: "Я голубь, а ты никто"
+    //   },
+    //   {
+    //     type: "user",
+    //     author: "Пёсик",
+    //     id: "12345",
+    //     message: "Я вообще то безумец, каких ещё поискать. Наглец ты эдакий."
+    //   },
+    //   {
+    //     type: "user",
+    //     author: "Енот",
+    //     id: "",
+    //     message: "Вот же вы дурачки"
+    //   },
+    //   {
+    //     type: "admin",
+    //     author: "",
+    //     id: "",
+    //     message: "Картофель Иван подключился"
+    //   },
+    //   {
+    //     type: "user",
+    //     author: "Пёсик",
+    //     id: "12345",
+    //     message: "Тоже мне аналитики нашлись. Привет!"
+    //   },
+    //   {
+    //     type: "user",
+    //     author: "Голубь Инокентий",
+    //     id: "",
+    //     message: "Я голубь, а ты никто"
+    //   }
+    // ]
   }),
   mounted() {
     this.checkResize();
   },
   watch: {
     messages() {
-      console.log(this.$refs)
       setTimeout(() => {
         this.$refs.block.scrollTop = this.$refs.block.scrollHeight;
       }, 0);
@@ -148,7 +144,10 @@ export default {
         });
     }
   },
-  computed: {}
+  computed: {
+    ...mapState(["user", "messages"])
+  }
+
 };
 </script>
 
