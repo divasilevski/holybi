@@ -41,6 +41,10 @@ export default {
       this.$store.commit("updateMessage", message);
     });
 
+    this.socket.on("DRAW", drawing => {
+      this.$store.commit("setDrawing", drawing);
+    });
+
     // // Help emit to find vuex
     // this.socket.on("UPDATE_USERS", users => {
     //   this.$store.commit("SOCKET_UPDATE_USERS", users);
@@ -59,7 +63,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["mode", "user", "users", "new_message"])
+    ...mapState(["mode", "user", "users", "new_message", "draw"])
   },
 
   watch: {
@@ -82,6 +86,9 @@ export default {
         message: this.new_message,
         room: this.user.room
       });
+    },
+    draw() {
+      this.socket.emit("DRAW", this.draw);
     }
   }
 };

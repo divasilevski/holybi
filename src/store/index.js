@@ -9,7 +9,9 @@ export default new Vuex.Store({
     user: undefined,
     messages: [],
     new_message: undefined,
-    users: []
+    users: [],
+    draw: [],
+    drawing: undefined
   },
   mutations: {
     setMode: (state, mode) => (state.mode = mode),
@@ -20,9 +22,13 @@ export default new Vuex.Store({
 
     updateUsers: (state, users) => (state.users = users),
 
-    updateMessage: (state, message) => (state.messages.push(message)),
+    updateMessage: (state, message) => state.messages.push(message),
 
     updateMessages: (state, messages) => (state.messages = messages),
+
+    setDraw: (state, draw) => (state.draw = draw),
+
+    setDrawing: (state, drawing) => (state.drawing = drawing),
 
     clearData(state) {
       state.user = undefined;
@@ -30,12 +36,9 @@ export default new Vuex.Store({
       state.users = [];
     },
 
-    
     SOCKET_newMessage(state, message) {
       state.messages.push(message);
     }
-
-    
   },
   actions: {},
   modules: {}

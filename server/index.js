@@ -9,6 +9,11 @@ const users = require("./users")();
 
 io.on("connection", socket => {
   //
+  socket.on("DRAW", data => {
+    socket.broadcast.emit("DRAW", data);
+  });
+
+  //
   socket.on("USER_JOINED", room => {
     const user = users.add(socket.id, room);
     const room_users = users.getByRoom(room);
