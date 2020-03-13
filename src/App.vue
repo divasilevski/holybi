@@ -88,7 +88,7 @@ export default {
       });
     },
     draw() {
-      this.socket.emit("DRAW", this.draw);
+      this.socket.emit("DRAW", { draw: this.draw, room: this.user.room });
     }
   }
 };
