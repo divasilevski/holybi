@@ -17,6 +17,8 @@ export default new Vuex.Store({
 
     updateUsers: (state, users) => (state.users = users),
 
+    updateMessages: (state, messages) => (state.messages = messages),
+
     clearData(state) {
       state.user = undefined;
       state.messages = [];
