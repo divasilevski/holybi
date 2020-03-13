@@ -29,6 +29,12 @@ io.on("connection", socket => {
     io.to(room).emit("UPDATE_MESSAGES", room_users[0].messages);
   });
 
+  socket.on("ADD_MESSAGE", ({ message, room }) => {
+    const room_users = users.getByRoom(room);
+    room_users[0].messages.push(message);
+    io.to(room).emit("UPDATE_MESSAGE", message);
+  });
+
   //
   socket.on("USER_LEAVE", () => {
     const user = users.remove(socket.id);

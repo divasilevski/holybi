@@ -8,6 +8,7 @@ export default new Vuex.Store({
     mode: undefined,
     user: undefined,
     messages: [],
+    new_message: undefined,
     users: []
   },
   mutations: {
@@ -15,7 +16,11 @@ export default new Vuex.Store({
 
     setUser: (state, user) => (state.user = user),
 
+    addMessage: (state, message) => (state.new_message = message),
+
     updateUsers: (state, users) => (state.users = users),
+
+    updateMessage: (state, message) => (state.messages.push(message)),
 
     updateMessages: (state, messages) => (state.messages = messages),
 
