@@ -55,7 +55,11 @@ io.on("connection", socket => {
 
           room_users[0].messages.push({
             type: "admin",
-            message: `Да здравствует, король ${user.name}!`
+            message: `Пользователь ${user.name} вышел!`
+          });
+          room_users[0].messages.push({
+            type: "admin",
+            message: `Да здравствует, король ${room_users[0].name}!`
           });
         } else {
           room_users[0].messages.push({
@@ -65,7 +69,7 @@ io.on("connection", socket => {
         }
         // 2
         io.to(user.room).emit("UPDATE_USERS", room_users);
-        io.to(room).emit("UPDATE_MESSAGES", room_users[0].messages);
+        io.to(user.room).emit("UPDATE_MESSAGES", room_users[0].messages);
       }
     }
   });
