@@ -54,7 +54,7 @@ io.on("connection", socket => {
         }
         // 2
         io.to(user.room).emit("UPDATE_USERS", room_users);
-        io.to(room).emit("UPDATE_MESSAGES", room_users[0].messages);
+        io.to(user.room).emit("UPDATE_MESSAGES", room_users[0].messages);
       }
     }
   });
