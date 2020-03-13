@@ -30,132 +30,116 @@
 import { mapState } from "vuex";
 export default {
   data: () => ({
+    canvas: undefined,
+    context: undefined,
+    current: {
+      color: "black"
+    },
+    drawing: false,
     message: "",
     board_size: "height: 0px",
     save_func: undefined
   }),
   created() {},
   mounted() {
-    this.checkResize();
+    this.canvas = document.getElementsByClassName("whiteboard")[0];
+    this.context = document
+      .getElementsByClassName("whiteboard")[0]
+      .getContext("2d");
 
-    //
-    //var canvas = document.getElementsByClassName('whiteboard')[0];
-    const store = this.$store;
-    let canvas = document.getElementsByClassName("whiteboard")[0];
+    if (this.canvas) {
+      this.checkResize();
+    }
 
-    const context = canvas.getContext("2d");
-    const current = {
-      color: "black"
-    };
-    let drawing = false;
-
-    canvas.addEventListener("mousedown", onMouseDown, false);
-    canvas.addEventListener("mouseup", onMouseUp, false);
-    canvas.addEventListener("mouseout", onMouseUp, false);
-    canvas.addEventListener("mousemove", throttle(onMouseMove, 10), false);
+    this.canvas.addEventListener("mousedown", this.onMouseDown, false);
+    this.canvas.addEventListener("mouseup", this.onMouseUp, false);
+    this.canvas.addEventListener("mouseout", this.onMouseUp, false);
+    this.canvas.addEventListener(
+      "mousemove",
+      this.throttle(this.onMouseMove, 10),
+      false
+    );
 
     //Touch support for mobile devices
-    canvas.addEventListener("touchstart", onMouseDown, false);
-    canvas.addEventListener("touchend", this.onMouseUp, false);
-    canvas.addEventListener("touchcancel", this.onMouseUp, false);
-    canvas.addEventListener("touchmove", throttle(onMouseMove, 10), false);
-
-    window.addEventListener("resize", onResize, false);
-
-    // make the canvas fill its parent
-    let onResize = () => {
-      canvas = document.getElementsByClassName("whiteboard")[0];
-
-      if (window.innerHeight - 140 < window.innerWidth) {
-        canvas.width = window.innerHeight - 140;
-        canvas.height = window.innerHeight - 140;
-      } else {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerWidth;
-      }
-    };
-
-    onResize();
-
-    function drawLine(x0, y0, x1, y1, color, emit) {
-      context.beginPath();
-      context.moveTo(x0, y0);
-      context.lineTo(x1, y1);
-      context.strokeStyle = color;
-      context.lineWidth = 2;
-      context.stroke();
-      context.closePath();
+    this.canvas.addEventListener("touchstart", this.onMouseDown, false);
+    this.canvas.addEventListener("touchend", this.onMouseUp, false);
+    this.canvas.addEventListener("touchcancel", this.onMouseUp, false);
+    this.canvas.addEventListener(
+      "touchmove",
+      this.throttle(this.onMouseMove, 10),
+      false
+    );
+  },
+  methods: {
+    drawLine(x0, y0, x1, y1, color, emit) {
+      this.context.beginPath();
+      this.context.moveTo(x0, y0);
+      this.context.lineTo(x1, y1);
+      this.context.strokeStyle = color;
+      this.context.lineWidth = 2;
+      this.context.stroke();
+      this.context.closePath();
 
       if (!emit) {
         return;
       }
 
-      let w = canvas.width;
-      let h = canvas.height;
+      let w = this.canvas.width;
+      let h = this.canvas.height;
 
-      store.commit("setDraw", {
-        x0,
-        y0,
-        x1,
-        y1,
+      this.$store.commit("setDraw", {
         x0: x0 / w,
         y0: y0 / h,
         x1: x1 / w,
         y1: y1 / h,
         color: color
       });
-    }
-
-    function onMouseDown(e) {
-      drawing = true;
-      const bcr = canvas.getBoundingClientRect();
-      current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
-      current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
-    }
-
-    function onMouseUp(e) {
-      if (!drawing) {
+    },
+    onMouseDown(e) {
+      this.drawing = true;
+      const bcr = this.canvas.getBoundingClientRect();
+      this.current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
+      this.current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
+    },
+    onMouseUp(e) {
+      if (!this.drawing) {
         return;
       }
-      drawing = false;
+      this.drawing = false;
 
-      const bcr = canvas.getBoundingClientRect();
+      const bcr = this.canvas.getBoundingClientRect();
 
-      drawLine(
-        current.x,
-        current.y,
+      this.drawLine(
+        this.current.x,
+        this.current.y,
         e.clientX - bcr.x || e.touches[0].clientX - bcr.x,
         e.clientY - bcr.y || e.touches[0].clientY - bcr.y,
-        current.color,
+        this.current.color,
         true
       );
-    }
+    },
 
-    function onMouseMove(e) {
-      if (!drawing) {
+    onMouseMove(e) {
+      if (!this.drawing) {
         return;
       }
 
-      const bcr = canvas.getBoundingClientRect();
+      const bcr = this.canvas.getBoundingClientRect();
 
-      drawLine(
-        current.x,
-        current.y,
+      this.drawLine(
+        this.current.x,
+        this.current.y,
         e.clientX - bcr.x || e.touches[0].clientX - bcr.x,
         e.clientY - bcr.y || e.touches[0].clientY - bcr.y,
-        current.color,
+        this.current.color,
         true
       );
-      current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
-      current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
-    }
-
-    function onColorUpdate(e) {
-      current.color = e.target.className.split(" ")[1];
-    }
+      this.current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
+      this.current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
+    },
 
     // limit the number of events per second
-    function throttle(callback, delay) {
+    throttle(callback, delay) {
       let previousCall = new Date().getTime();
       return function() {
         let time = new Date().getTime();
@@ -165,33 +149,39 @@ export default {
           callback.apply(null, arguments);
         }
       };
-    }
+    },
 
-    function onDrawingEvent({ x0, y0, x1, y1, color }) {
-      let w = canvas.width;
-      let h = canvas.height;
+    onDrawingEvent({ x0, y0, x1, y1, color }) {
+      let w = this.canvas.width;
+      let h = this.canvas.height;
 
-      drawLine(x0 * w, y0 * h, x1 * w, y1 * h, color);
-    }
-
-    this.save_func = onDrawingEvent;
-  },
-  methods: {
+      this.drawLine(x0 * w, y0 * h, x1 * w, y1 * h, color);
+    },
     checkResize() {
       if (window.innerHeight - 140 < window.innerWidth) {
         this.board_size = `height: ${window.innerHeight -
           140}px; width: ${window.innerHeight - 140}px`;
+
+        if (this.canvas) {
+          this.canvas.width = window.innerHeight - 140;
+          this.canvas.height = window.innerHeight - 140;
+        }
       } else {
         this.board_size = `height: ${window.innerWidth}px; width: ${window.innerWidth}px`;
+
+        if (this.canvas) {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerWidth;
+        }
       }
     }
   },
   computed: {
-    ...mapState(["drawing"])
+    ...mapState(["drawIt"])
   },
   watch: {
-    drawing() {
-     this.save_func(this.drawing);
+    drawIt() {
+      this.onDrawingEvent(this.drawIt);
     }
   }
 };

@@ -11,7 +11,7 @@ export default new Vuex.Store({
     new_message: undefined,
     users: [],
     draw: [],
-    drawing: undefined
+    drawIt: undefined
   },
   mutations: {
     setMode: (state, mode) => (state.mode = mode),
@@ -28,7 +28,7 @@ export default new Vuex.Store({
 
     setDraw: (state, draw) => (state.draw = draw),
 
-    setDrawing: (state, drawing) => (state.drawing = drawing),
+    setDrawing: (state, drawing) => (state.drawIt = drawing),
 
     clearData(state) {
       state.user = undefined;
