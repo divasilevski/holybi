@@ -44,7 +44,11 @@ io.on("connection", socket => {
 
           room_users[0].messages.push({
             type: "admin",
-            message: `Да здравствует, король ${user.name}!`
+            message: `Пользователь ${user.name} вышел!`
+          });
+          room_users[0].messages.push({
+            type: "admin",
+            message: `Да здравствует, король ${room_users[0].name}!`
           });
         } else {
           room_users[0].messages.push({
