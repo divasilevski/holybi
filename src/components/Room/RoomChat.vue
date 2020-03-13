@@ -55,7 +55,6 @@
     <v-form class="pt-2" style="max-width: 350px;" @submit.prevent>
       <v-text-field
         v-on:keyup.enter="sendMessage"
-        @click="sendMessage"
         dense
         rounded
         hide-details
@@ -63,7 +62,7 @@
         solo
         label="Message"
         type="text"
-      ><btn icon><v-icon>mdi-send</v-icon></btn></v-text-field>
+      ><btn @click="sendMessage" icon><v-icon>mdi-send</v-icon></btn></v-text-field>
     </v-form>
   </div>
 </template>
@@ -80,44 +79,6 @@ export default {
       { author: "Енот", id: "" },
       { author: "Пёсик", id: "12345" }
     ]
-    // messages: [
-    //   {
-    //     type: "user",
-    //     author: "Голубь Инокентий",
-    //     id: "",
-    //     message: "Я голубь, а ты никто"
-    //   },
-    //   {
-    //     type: "user",
-    //     author: "Пёсик",
-    //     id: "12345",
-    //     message: "Я вообще то безумец, каких ещё поискать. Наглец ты эдакий."
-    //   },
-    //   {
-    //     type: "user",
-    //     author: "Енот",
-    //     id: "",
-    //     message: "Вот же вы дурачки"
-    //   },
-    //   {
-    //     type: "admin",
-    //     author: "",
-    //     id: "",
-    //     message: "Картофель Иван подключился"
-    //   },
-    //   {
-    //     type: "user",
-    //     author: "Пёсик",
-    //     id: "12345",
-    //     message: "Тоже мне аналитики нашлись. Привет!"
-    //   },
-    //   {
-    //     type: "user",
-    //     author: "Голубь Инокентий",
-    //     id: "",
-    //     message: "Я голубь, а ты никто"
-    //   }
-    // ]
   }),
   mounted() {
     this.checkResize();
@@ -135,8 +96,7 @@ export default {
       this.chat_height = `height: ${window.innerHeight - 150}px;`;
     },
     sendMessage() {
-      if (this.message)
-        this.messages.push({
+      this.$store.commit("addMessage", {
           type: "user",
           author: this.user.name,
           id: this.user.id,

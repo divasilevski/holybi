@@ -9,6 +9,11 @@ const users = require("./users")();
 
 io.on("connection", socket => {
   //
+  socket.on("DRAW", data => {
+    socket.broadcast.emit("DRAW", data);
+  });
+
+  //
   socket.on("USER_JOINED", room => {
     const user = users.add(socket.id, room);
     const room_users = users.getByRoom(room);
@@ -27,6 +32,12 @@ io.on("connection", socket => {
         ]);
 
     io.to(room).emit("UPDATE_MESSAGES", room_users[0].messages);
+  });
+
+  socket.on("ADD_MESSAGE", ({ message, room }) => {
+    const room_users = users.getByRoom(room);
+    room_users[0].messages.push(message);
+    io.to(room).emit("UPDATE_MESSAGE", message);
   });
 
   //
