@@ -1,8 +1,8 @@
 <template>
-  <div v-resize="checkResize">
+  <div v-resize="checkResize" style="width:100%; max-width: 380px;">
     <div
-       ref="block"
-      style="max-width: 370px;"
+      ref="block"
+      style="width:100%;"
       :style="chat_height"
       class="overflow-y-auto"
       elevation="0"
@@ -10,11 +10,23 @@
       <div v-for="(m, index) in messages" :key="index">
         <v-container
           v-if="m.type === 'user' && m.id !== user.id"
-          class="d-flex justify-start pa-2"
+          class="d-flex justify-start pr-pl-4 pb-0 pt-1"
         >
-          <v-card color="cyan lighten-5" max-width="85%" class="d-inline-flex">
-            <v-card-text class="pa-2">
-              <div class="overline">
+          <v-card
+            color="light-blue lighten-5"
+            max-width="85%"
+            class="d-inline-flex"
+            style="min-width: 60%; border-radius: 0px 15px 15px 15px"
+          >
+            <v-card-text class="pa-2 pl-3 pr-3">
+              <div
+                v-if="
+                  messages[index - 1]
+                    ? messages[index - 1].author !== m.author
+                    : true
+                "
+                class="font-weight-black caption font-italic"
+              >
                 <strong>{{ m.author }}</strong>
               </div>
               {{ m.message }}
@@ -24,15 +36,23 @@
 
         <v-container
           v-else-if="m.type === 'user' && m.id === user.id"
-          class="d-flex justify-end pa-2"
+          class="d-flex justify-end pr-pl-4 pb-0 pt-1"
         >
           <v-card
             color="light-blue lighten-3"
             max-width="85%"
             class="d-inline-flex"
+            style="min-width: 60%; border-radius: 15px 0px 15px 15px"
           >
-            <v-card-text class="pa-2">
-              <div class="overline">
+            <v-card-text class="pa-2 pl-3 pr-3">
+              <div
+                v-if="
+                  messages[index - 1]
+                    ? messages[index - 1].author !== m.author
+                    : true
+                "
+                class="font-weight-black caption font-italic"
+              >
                 <strong>{{ m.author }}</strong>
               </div>
               {{ m.message }}
@@ -40,10 +60,11 @@
           </v-card>
         </v-container>
 
-        <v-container v-else class="d-flex justify-center pa-1">
-          <v-chip small color="blue-grey lighten-5">{{ m.message }}</v-chip>
+        <v-container v-else class="d-flex justify-center pa-0 pt-2 pb-1">
+          <v-chip small color="pink lighten-5">{{ m.message }}</v-chip>
         </v-container>
       </div>
+      <div class="pa-1"></div>
 
       <!-- TYPING -->
       <!-- <div v-for="(t, index) in typing" :key="index-1000">
@@ -52,7 +73,7 @@
         </v-container>
       </div> -->
     </div>
-    <v-form class="pt-2" style="max-width: 350px;" @submit.prevent>
+    <v-form class="pt-2" @submit.prevent>
       <v-text-field
         v-on:keyup.enter="sendMessage"
         dense
@@ -62,7 +83,10 @@
         solo
         label="Message"
         type="text"
-      ><btn @click="sendMessage" icon><v-icon>mdi-send</v-icon></btn></v-text-field>
+        ><btn @click="sendMessage" icon
+          ><v-icon>mdi-send</v-icon></btn
+        ></v-text-field
+      >
     </v-form>
   </div>
 </template>
@@ -93,21 +117,20 @@ export default {
 
   methods: {
     checkResize() {
-      this.chat_height = `height: ${window.innerHeight - 150}px;`;
+      this.chat_height = `height: ${window.innerHeight - 140}px;`;
     },
     sendMessage() {
       this.$store.commit("addMessage", {
-          type: "user",
-          author: this.user.name,
-          id: this.user.id,
-          message: this.message
-        });
+        type: "user",
+        author: this.user.name,
+        id: this.user.id,
+        message: this.message
+      });
     }
   },
   computed: {
     ...mapState(["user", "messages"])
   }
-
 };
 </script>
 

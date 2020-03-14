@@ -83,12 +83,13 @@
     <v-content v-resize="resize">
       <v-container class="pb-0 pt-0">
         <v-row class="d-flex justify-center">
-          <v-col v-if="bot_nav_board" cols="12" md="7" sm="7" class="pb-0 pt-0">
+          <v-col v-if="bot_nav_board" cols="12" md="7" sm="12" class="pb-0 pt-0">
             <div class="d-flex justify-center">
               <RoomBoard />
             </div>
           </v-col>
-          <v-col v-if="bot_nav_chat" cols="12" md="5" sm="5" class="pb-0 pt-0">
+          <v-spacer></v-spacer>
+          <v-col v-if="bot_nav_chat" cols="12" md="5" sm="12" class="pb-0 pt-0">
             <div class="d-flex justify-center">
               <RoomChat />
             </div>

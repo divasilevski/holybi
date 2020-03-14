@@ -191,5 +191,5 @@ export default {
 </script>
 <style lang="sass">
 .whiteboard
-    background-color: rgb(240,240,255)
+    background: #E9FFFD
 </style>
