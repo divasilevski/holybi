@@ -1,13 +1,14 @@
 <template>
-  <div v-resize="checkResize" style="width:100%; max-width: 380px;">
+  <div class="main-div" v-resize="onResize">
+    <!-- MESSAGE BLOCK -->
     <div
-      ref="block"
-      style="width:100%;"
-      :style="chat_height"
-      class="overflow-y-auto"
-      elevation="0"
+      class="overflow-y-auto elevation-0"
+      ref="message_block"
+      :style="message_block_height"
     >
-      <div v-for="(m, index) in messages" :key="index">
+      <!-- ITERATIONS -->
+      <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
+        <!-- NORMAL MESSAGE -->
         <v-container
           v-if="m.type === 'user' && m.id !== user.id"
           class="d-flex justify-start pr-pl-4 pb-0 pt-1"
@@ -66,11 +67,11 @@
           </v-card>
         </v-container>
 
+        <!-- ADMIN MESSAGE -->
         <v-container v-else class="d-flex justify-center pa-0 pt-2 pb-1">
           <v-chip small color="pink lighten-5">{{ m.message }}</v-chip>
         </v-container>
       </div>
-      <div class="pa-1"></div>
 
       <!-- TYPING -->
       <!-- <div v-for="(t, index) in typing" :key="index-1000">
@@ -78,7 +79,12 @@
           <v-chip x-small color="white">{{ t.author }} печатает...</v-chip>
         </v-container>
       </div> -->
+
+      <!-- SPACE -->
+      <div class="pa-1"></div>
     </div>
+
+    <!-- INPUT FORM -->
     <v-form class="pt-4" @submit.prevent fluid>
       <v-textarea
         contenteditable="true"
@@ -97,7 +103,7 @@
             ? message.trim().length > 5
               ? 'mdi-chevron-double-up'
               : 'mdi-chevron-up'
-            : false
+            : undefined
         "
         @click:append="sendMessage"
       ></v-textarea>
@@ -108,30 +114,45 @@
 <script>
 import { mapState } from "vuex";
 export default {
-  name: "Chat",
+  computed: {
+    ...mapState(["user", "messages"])
+  },
+
   data: () => ({
     message: "",
-    chat_height: "height: 0px",
+    message_block_height: "",
     typing: [
       { author: "Голубь Инокентий", id: "" },
       { author: "Енот", id: "" },
       { author: "Пёсик", id: "12345" }
     ]
   }),
+
   mounted() {
-    this.checkResize();
+    this.onResize();
+    this.scrollTop();
   },
+
   watch: {
     messages() {
-      setTimeout(() => {
-        this.$refs.block.scrollTop = this.$refs.block.scrollHeight;
-      }, 0);
+      this.scrollTop();
     }
   },
 
   methods: {
-    checkResize() {
-      this.chat_height = `height: ${window.innerHeight - 140}px;`;
+    onResize() {
+      this.message_block_height = `height: ${window.innerHeight - 140}px;`;
+    },
+    handleKeypress(event) {
+      if (!event.shiftKey && event.which === 13) {
+        event.preventDefault();
+        this.sendMessage();
+      }
+    },
+    scrollTop() {
+      setTimeout(() => {
+        this.$refs.message_block.scrollTop = this.$refs.message_block.scrollHeight;
+      }, 0);
     },
     sendMessage() {
       this.message = this.message.trim();
@@ -145,16 +166,7 @@ export default {
         });
         this.message = "";
       }
-    },
-    handleKeypress(event) {
-      if (!event.shiftKey && event.which === 13) {
-        event.preventDefault();
-        this.sendMessage();
-      }
     }
-  },
-  computed: {
-    ...mapState(["user", "messages"])
   }
 };
 </script>
@@ -166,6 +178,10 @@ export default {
 html {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.main-div {
+  width: 100%;
+  max-width: 380px;
 }
 .diviant {
   font-size: 8pt;
