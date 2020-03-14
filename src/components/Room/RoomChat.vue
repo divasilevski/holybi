@@ -18,7 +18,10 @@
             class="d-inline-flex"
             style="min-width: 60%; border-radius: 0px 15px 15px 15px"
           >
-            <v-card-text class="pa-2 pl-3 pr-3">
+            <div class="diviant pr-3">
+              {{ m.time }}
+            </div>
+            <v-card-text class="pt-2 pb-3 pl-3 pr-3">
               <div
                 v-if="
                   messages[index - 1]
@@ -44,7 +47,10 @@
             class="d-inline-flex"
             style="min-width: 60%; border-radius: 15px 0px 15px 15px"
           >
-            <v-card-text class="pa-2 pl-3 pr-3">
+            <div class="diviant pr-3">
+              {{ m.time }}
+            </div>
+            <v-card-text class="pt-2 pb-3 pl-3 pr-3">
               <div
                 v-if="
                   messages[index - 1]
@@ -124,7 +130,8 @@ export default {
         type: "user",
         author: this.user.name,
         id: this.user.id,
-        message: this.message
+        message: this.message,
+        time: new Date().toLocaleTimeString().slice(0, 5)
       });
     }
   },
@@ -141,5 +148,11 @@ export default {
 html {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.diviant {
+  font-size: 8pt;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 </style>
