@@ -130,7 +130,7 @@ export default {
 
   mounted() {
     this.onResize();
-    this.scrollTop();
+    if (this.$refs.message_block.scrollHeight) this.scrollTop();
   },
 
   watch: {
