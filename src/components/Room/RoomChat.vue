@@ -32,7 +32,7 @@
               >
                 <strong>{{ m.author }}</strong>
               </div>
-              {{ m.message }}
+              <div v-html="m.message.split('\n').join('<br/>')"></div>
             </v-card-text>
           </v-card>
         </v-container>
@@ -50,10 +50,7 @@
             <div class="diviant pr-3">
               {{ m.time }}
             </div>
-            <v-card-text
-              v-html="m.message.split('\n').join('<br/>')"
-              class="pt-2 pb-3 pl-3 pr-3"
-            >
+            <v-card-text class="pt-2 pb-3 pl-3 pr-3">
               <div
                 v-if="
                   messages[index - 1]
@@ -64,7 +61,7 @@
               >
                 <strong>{{ m.author }}</strong>
               </div>
-              {{ m.message }}
+              <div v-html="m.message.split('\n').join('<br/>')"></div>
             </v-card-text>
           </v-card>
         </v-container>
@@ -95,6 +92,14 @@
         rows="1"
         label="Написать сообщение..."
         type="text"
+        :append-icon="
+          message.trim()
+            ? message.trim().length > 5
+              ? 'mdi-chevron-double-up'
+              : 'mdi-chevron-up'
+            : false
+        "
+        @click:append="sendMessage"
       ></v-textarea>
     </v-form>
   </div>
@@ -128,20 +133,23 @@ export default {
     checkResize() {
       this.chat_height = `height: ${window.innerHeight - 140}px;`;
     },
+    sendMessage() {
+      this.message = this.message.trim();
+      if (this.message) {
+        this.$store.commit("addMessage", {
+          type: "user",
+          author: this.user.name,
+          id: this.user.id,
+          message: this.message,
+          time: new Date().toLocaleTimeString().slice(0, 5)
+        });
+        this.message = "";
+      }
+    },
     handleKeypress(event) {
       if (!event.shiftKey && event.which === 13) {
         event.preventDefault();
-        this.message = this.message.trim()
-        if (this.message) {
-          this.$store.commit("addMessage", {
-            type: "user",
-            author: this.user.name,
-            id: this.user.id,
-            message: this.message,
-            time: new Date().toLocaleTimeString().slice(0, 5)
-          });
-          this.message = "";
-        }
+        this.sendMessage();
       }
     }
   },
