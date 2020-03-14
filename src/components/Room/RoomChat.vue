@@ -50,7 +50,10 @@
             <div class="diviant pr-3">
               {{ m.time }}
             </div>
-            <v-card-text class="pt-2 pb-3 pl-3 pr-3">
+            <v-card-text
+              v-html="m.message.split('\n').join('<br/>')"
+              class="pt-2 pb-3 pl-3 pr-3"
+            >
               <div
                 v-if="
                   messages[index - 1]
@@ -79,20 +82,20 @@
         </v-container>
       </div> -->
     </div>
-    <v-form class="pt-2" @submit.prevent>
-      <v-text-field
-        v-on:keyup.enter="sendMessage"
-        dense
-        rounded
-        hide-details
+    <v-form class="pt-4" @submit.prevent fluid>
+      <v-textarea
+        contenteditable="true"
+        autocomplete="off"
+        v-on:keypress="handleKeypress($event)"
         v-model="message"
         solo
-        label="Message"
+        hide-details
+        no-resize
+        rounded
+        rows="1"
+        label="Написать сообщение..."
         type="text"
-        ><btn @click="sendMessage" icon
-          ><v-icon>mdi-send</v-icon></btn
-        ></v-text-field
-      >
+      ></v-textarea>
     </v-form>
   </div>
 </template>
@@ -125,14 +128,21 @@ export default {
     checkResize() {
       this.chat_height = `height: ${window.innerHeight - 140}px;`;
     },
-    sendMessage() {
-      this.$store.commit("addMessage", {
-        type: "user",
-        author: this.user.name,
-        id: this.user.id,
-        message: this.message,
-        time: new Date().toLocaleTimeString().slice(0, 5)
-      });
+    handleKeypress(event) {
+      if (!event.shiftKey && event.which === 13) {
+        event.preventDefault();
+        this.message = this.message.trim()
+        if (this.message) {
+          this.$store.commit("addMessage", {
+            type: "user",
+            author: this.user.name,
+            id: this.user.id,
+            message: this.message,
+            time: new Date().toLocaleTimeString().slice(0, 5)
+          });
+          this.message = "";
+        }
+      }
     }
   },
   computed: {
