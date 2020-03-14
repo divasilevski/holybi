@@ -1,6 +1,6 @@
 <template>
   <div v-resize="checkResize">
-    <canvas class="whiteboard" :style="board_size"></canvas>
+    <canvas v-scroll-lock="true" class="whiteboard" :style="board_size"></canvas>
 
     <v-toolbar dense flat class="pa-0">
       <v-btn-toggle class="pa-0" color="primary" dense group multiple>
