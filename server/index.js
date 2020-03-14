@@ -36,7 +36,10 @@ io.on("connection", socket => {
 
   socket.on("ADD_MESSAGE", ({ message, room }) => {
     const room_users = users.getByRoom(room);
-    room_users[0].messages.push(message);
+    
+    if (room_users[0] && room_users[0].messages) {
+      room_users[0].messages.push(message);
+    }
     io.to(room).emit("UPDATE_MESSAGE", message);
   });
 
