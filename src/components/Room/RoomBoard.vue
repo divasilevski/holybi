@@ -96,12 +96,14 @@ export default {
       });
     },
     onMouseDown(e) {
+      e.preventDefault();
       this.drawing = true;
       const bcr = this.canvas.getBoundingClientRect();
       this.current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
       this.current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
     },
     onMouseUp(e) {
+      e.preventDefault();
       if (!this.drawing) {
         return;
       }
@@ -120,6 +122,7 @@ export default {
     },
 
     onMouseMove(e) {
+      e.preventDefault();
       if (!this.drawing) {
         return;
       }
