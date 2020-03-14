@@ -10,47 +10,25 @@
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
         <!-- NORMAL MESSAGE -->
         <v-container
-          v-if="m.type === 'user' && m.id !== user.id"
-          class="d-flex justify-start pr-pl-4 pb-0 pt-1"
+          v-if="m.type === 'user'"
+          class="d-flex pr-pl-4 pb-0 pt-1"
+          :class="m.id === user.id ? 'justify-end' : 'justify-start'"
         >
           <v-card
-            color="light-blue lighten-5"
-            max-width="85%"
-            class="d-inline-flex"
-            style="min-width: 60%; border-radius: 0px 15px 15px 15px"
+            class="message-card d-inline-flex"
+            :color="
+              m.id === user.id ? 'light-blue lighten-2' : 'light-blue lighten-4'
+            "
+            :style="
+              m.id === user.id
+                ? 'border-radius: 15px 0px 15px 15px'
+                : 'border-radius: 0px 15px 15px 15px'
+            "
           >
-            <div class="diviant pr-3">
-              {{ m.time }}
-            </div>
-            <v-card-text class="pt-2 pb-3 pl-3 pr-3">
-              <div
-                v-if="
-                  messages[index - 1]
-                    ? messages[index - 1].author !== m.author
-                    : true
-                "
-                class="font-weight-black caption font-italic"
-              >
-                <strong>{{ m.author }}</strong>
-              </div>
-              <div v-html="m.message.split('\n').join('<br/>')"></div>
-            </v-card-text>
-          </v-card>
-        </v-container>
+            <!-- Time -->
+            <div class="message-time pr-3">{{ m.time }}</div>
 
-        <v-container
-          v-else-if="m.type === 'user' && m.id === user.id"
-          class="d-flex justify-end pr-pl-4 pb-0 pt-1"
-        >
-          <v-card
-            color="light-blue lighten-3"
-            max-width="85%"
-            class="d-inline-flex"
-            style="min-width: 60%; border-radius: 15px 0px 15px 15px"
-          >
-            <div class="diviant pr-3">
-              {{ m.time }}
-            </div>
+            <!-- Author -->
             <v-card-text class="pt-2 pb-3 pl-3 pr-3">
               <div
                 v-if="
@@ -62,6 +40,8 @@
               >
                 <strong>{{ m.author }}</strong>
               </div>
+
+              <!-- Message -->
               <div v-html="m.message.split('\n').join('<br/>')"></div>
             </v-card-text>
           </v-card>
@@ -172,21 +152,27 @@ export default {
 </script>
 
 <style>
+.main-div {
+  width: 100%;
+  max-width: 380px;
+}
+.message-card {
+  max-width: 85%;
+  min-width: 60%;
+}
+.message-time {
+  color: rgba(34, 87, 201, 0.678);
+  font-size: 8pt;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+/* Delete scrolls */
 ::-webkit-scrollbar {
   width: 10px;
 }
 html {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-.main-div {
-  width: 100%;
-  max-width: 380px;
-}
-.diviant {
-  font-size: 8pt;
-  position: absolute;
-  right: 0;
-  bottom: 0;
 }
 </style>
