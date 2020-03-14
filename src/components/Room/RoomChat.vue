@@ -144,7 +144,7 @@ export default {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
     },
     handleKeypress(event) {
-      if (!event.shiftKey && event.which === 13) {
+      if (!event.shiftKey && event.code === "Enter") {
         event.preventDefault();
         this.sendMessage();
       }
