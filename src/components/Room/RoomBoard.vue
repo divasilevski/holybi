@@ -1,6 +1,6 @@
 <template>
   <div v-resize="checkResize">
-    <canvas v-scroll-lock="true" class="whiteboard" :style="board_size"></canvas>
+    <canvas class="whiteboard" :style="board_size"></canvas>
 
     <v-toolbar dense flat class="pa-0">
       <v-btn-toggle class="pa-0" color="primary" dense group multiple>
@@ -96,12 +96,14 @@ export default {
       });
     },
     onMouseDown(e) {
+      e.preventDefault();
       this.drawing = true;
       const bcr = this.canvas.getBoundingClientRect();
       this.current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
       this.current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
     },
     onMouseUp(e) {
+      e.preventDefault();
       if (!this.drawing) {
         return;
       }
@@ -120,6 +122,7 @@ export default {
     },
 
     onMouseMove(e) {
+      e.preventDefault();
       if (!this.drawing) {
         return;
       }
