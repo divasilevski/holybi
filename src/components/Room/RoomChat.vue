@@ -55,7 +55,7 @@
                     ? messages[index - 1].author !== m.author
                     : true
                 "
-                class="font-weight-black caption font-italic"
+                class="font-weight-black caption"
               >
                 <strong>{{ m.author }}</strong>
               </div>
@@ -114,6 +114,10 @@
 </template>
 
 <script>
+const SCROLL_FPS = 30;
+const SCROLL_HEIGHT = 700;
+const SCROLL_TIME = 800;
+
 import { mapState } from "vuex";
 export default {
   computed: {
@@ -121,7 +125,6 @@ export default {
   },
 
   data: () => ({
-    const_scroll_height: 800,
     message: "",
     btn_scroll: false,
     message_block_height: "",
@@ -132,7 +135,12 @@ export default {
 
   mounted() {
     this.onResize();
-    if (this.$refs.message_block.scrollHeight) this.scrollTop();
+    const msgb = this.$refs.message_block;
+    if (msgb) {
+      setTimeout(() => {
+        msgb.scrollTop = msgb.scrollHeight;
+      });
+    }
   },
 
   watch: {
@@ -150,6 +158,7 @@ export default {
         clearTimeout(this.timer);
       }
     },
+
     user_typing(bool) {
       if (bool)
         this.$store.commit("addTyping", {
@@ -158,28 +167,24 @@ export default {
         });
       else this.$store.commit("delTyping", this.user.id);
     },
-    typing(value) {
-      // Если данный пользователь начал печатать
-      if (value.filter(obj => obj.id === this.user.id).length) return;
-      else {
-        // Если данный пользователь закончил печатать
-        if (this.user_typing_end) return;
-        else {
-          // Если страница скролла не ушла далеко
-          const msgb = this.$refs.message_block;
 
-          if (msgb.scrollHeight - msgb.scrollTop < this.const_scroll_height)
+    typing(value) {
+      if (!value.filter(obj => obj.id === this.user.id).length) {
+        if (!this.user_typing_end) {
+          const msgb = this.$refs.message_block;
+          if (msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT)
             this.scrollTop();
         }
       }
 
       this.user_typing_end = false;
     },
+
     messages() {
       const msgb = this.$refs.message_block;
 
       if (
-        msgb.scrollHeight - msgb.scrollTop < this.const_scroll_height ||
+        msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT ||
         this.messages[this.messages.length - 1].id === this.user.id
       )
         this.scrollTop();
@@ -191,38 +196,37 @@ export default {
       const msgb = this.$refs.message_block;
 
       this.btn_scroll =
-        msgb.scrollHeight - msgb.scrollTop < this.const_scroll_height
-          ? false
-          : true;
+        msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT ? false : true;
     },
+
     onResize() {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
     },
+
     handleKeypress(event) {
       if (!event.shiftKey && event.code === "Enter") {
         event.preventDefault();
         this.sendMessage();
       }
     },
+
     scrollTop() {
       setTimeout(() => {
-        const fps = 50;
-        const time = 1000;
         const msgb = this.$refs.message_block;
         const distance = msgb.scrollHeight - msgb.scrollTop;
-        const speed = distance / fps;
+        const interval = distance / SCROLL_FPS;
 
-        const interval = setInterval(() => {
-          this.$refs.message_block.scrollTop += speed;
-        }, time / fps);
+        const process = setInterval(() => {
+          msgb.scrollTop += interval;
+        }, SCROLL_TIME / SCROLL_FPS);
 
         setTimeout(() => {
-          clearInterval(interval);
-        }, time);
-        
+          clearInterval(process);
+        }, SCROLL_TIME);
       }, 0);
       this.btn_scroll = false;
     },
+
     sendMessage() {
       this.message = this.message.trim();
       if (this.message) {
