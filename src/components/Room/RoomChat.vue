@@ -4,53 +4,50 @@
     <div
       class="overflow-y-auto elevation-0"
       ref="message_block"
+      v-on:scroll="onScroll"
       :style="message_block_height"
     >
+      <v-fab-transition>
+        <v-btn
+          v-if="btn_scroll"
+          @click="scrollTop"
+          absolute
+          small
+          fab
+          style="bottom: 70px;"
+          class="elevation-1 button-outline"
+          color="light-blue lighten-1"
+        >
+          <v-icon>mdi-chevron-down</v-icon>
+        </v-btn>
+      </v-fab-transition>
+      <div class="attenuation"></div>
+
+      <div class="indent"></div>
+
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
         <!-- NORMAL MESSAGE -->
         <v-container
-          v-if="m.type === 'user' && m.id !== user.id"
-          class="d-flex justify-start pr-pl-4 pb-0 pt-1"
+          v-if="m.type === 'user'"
+          class="d-flex pr-pl-4 pb-0 pt-1"
+          :class="m.id === user.id ? 'justify-end' : 'justify-start'"
         >
           <v-card
-            color="light-blue lighten-5"
-            max-width="85%"
-            class="d-inline-flex"
-            style="min-width: 60%; border-radius: 0px 15px 15px 15px"
+            class="message-card d-inline-flex"
+            :color="
+              m.id === user.id ? 'light-blue lighten-2' : 'light-blue lighten-4'
+            "
+            :style="
+              m.id === user.id
+                ? 'border-radius: 15px 0px 15px 15px'
+                : 'border-radius: 0px 15px 15px 15px'
+            "
           >
-            <div class="diviant pr-3">
-              {{ m.time }}
-            </div>
-            <v-card-text class="pt-2 pb-3 pl-3 pr-3">
-              <div
-                v-if="
-                  messages[index - 1]
-                    ? messages[index - 1].author !== m.author
-                    : true
-                "
-                class="font-weight-black caption font-italic"
-              >
-                <strong>{{ m.author }}</strong>
-              </div>
-              <div v-html="m.message.split('\n').join('<br/>')"></div>
-            </v-card-text>
-          </v-card>
-        </v-container>
+            <!-- Time -->
+            <div class="message-time pr-3">{{ m.time }}</div>
 
-        <v-container
-          v-else-if="m.type === 'user' && m.id === user.id"
-          class="d-flex justify-end pr-pl-4 pb-0 pt-1"
-        >
-          <v-card
-            color="light-blue lighten-3"
-            max-width="85%"
-            class="d-inline-flex"
-            style="min-width: 60%; border-radius: 15px 0px 15px 15px"
-          >
-            <div class="diviant pr-3">
-              {{ m.time }}
-            </div>
+            <!-- Author -->
             <v-card-text class="pt-2 pb-3 pl-3 pr-3">
               <div
                 v-if="
@@ -58,10 +55,12 @@
                     ? messages[index - 1].author !== m.author
                     : true
                 "
-                class="font-weight-black caption font-italic"
+                class="font-weight-black caption"
               >
                 <strong>{{ m.author }}</strong>
               </div>
+
+              <!-- Message -->
               <div v-html="m.message.split('\n').join('<br/>')"></div>
             </v-card-text>
           </v-card>
@@ -73,12 +72,15 @@
         </v-container>
       </div>
 
-      <!-- TYPING -->
-      <!-- <div v-for="(t, index) in typing" :key="index-1000">
-        <v-container v-if="t.id !== user.id" class="d-flex justify-left pa-0">
+      <!-- TYPING  -->
+      <div v-for="(t, index) in typing" :key="index + 'typing'">
+        <v-container
+          v-if="t.id !== user.id"
+          class="d-flex justify-left pa-0 pt-1"
+        >
           <v-chip x-small color="white">{{ t.author }} печатает...</v-chip>
         </v-container>
-      </div> -->
+      </div>
 
       <!-- SPACE -->
       <div class="pa-1"></div>
@@ -112,48 +114,119 @@
 </template>
 
 <script>
+const SCROLL_FPS = 30;
+const SCROLL_HEIGHT = 700;
+const SCROLL_TIME = 800;
+
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["user", "messages"])
+    ...mapState(["user", "messages", "typing"])
   },
 
   data: () => ({
     message: "",
+    btn_scroll: false,
     message_block_height: "",
-    typing: [
-      { author: "Голубь Инокентий", id: "" },
-      { author: "Енот", id: "" },
-      { author: "Пёсик", id: "12345" }
-    ]
+    user_typing: false,
+    user_typing_end: false,
+    timer: undefined
   }),
 
   mounted() {
     this.onResize();
-    if (this.$refs.message_block.scrollHeight) this.scrollTop();
+    const msgb = this.$refs.message_block;
+    if (msgb) {
+      setTimeout(() => {
+        msgb.scrollTop = msgb.scrollHeight;
+      });
+    }
   },
 
   watch: {
+    message(message) {
+      if (message.trim()) {
+        this.user_typing = true;
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+          this.user_typing = false;
+          this.user_typing_end = true;
+        }, 1800);
+      } else {
+        this.user_typing = false;
+        this.user_typing_end = true;
+        clearTimeout(this.timer);
+      }
+    },
+
+    user_typing(bool) {
+      if (bool)
+        this.$store.commit("addTyping", {
+          author: this.user.name,
+          id: this.user.id
+        });
+      else this.$store.commit("delTyping", this.user.id);
+    },
+
+    typing(value) {
+      if (!value.filter(obj => obj.id === this.user.id).length) {
+        if (!this.user_typing_end) {
+          const msgb = this.$refs.message_block;
+          if (msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT)
+            this.scrollTop();
+        }
+      }
+
+      this.user_typing_end = false;
+    },
+
     messages() {
-      this.scrollTop();
+      const msgb = this.$refs.message_block;
+
+      if (
+        msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT ||
+        this.messages[this.messages.length - 1].id === this.user.id
+      )
+        this.scrollTop();
     }
   },
 
   methods: {
+    onScroll() {
+      const msgb = this.$refs.message_block;
+
+      this.btn_scroll =
+        msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT ? false : true;
+    },
+
     onResize() {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
     },
+
     handleKeypress(event) {
       if (!event.shiftKey && event.code === "Enter") {
         event.preventDefault();
         this.sendMessage();
       }
     },
+
     scrollTop() {
       setTimeout(() => {
-        this.$refs.message_block.scrollTop = this.$refs.message_block.scrollHeight;
+        const msgb = this.$refs.message_block;
+        const distance = msgb.scrollHeight - msgb.scrollTop;
+        const interval = distance / SCROLL_FPS;
+
+        const process = setInterval(() => {
+          msgb.scrollTop += interval;
+        }, SCROLL_TIME / SCROLL_FPS);
+
+        setTimeout(() => {
+          clearInterval(process);
+        }, SCROLL_TIME);
       }, 0);
+      this.btn_scroll = false;
     },
+
     sendMessage() {
       this.message = this.message.trim();
       if (this.message) {
@@ -172,21 +245,38 @@ export default {
 </script>
 
 <style>
+.main-div {
+  width: 100%;
+  max-width: 380px;
+}
+.attenuation {
+  position: absolute;
+  height: 5px;
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(rgb(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+  z-index: 1;
+}
+.indent {
+  padding-top: 100px;
+}
+.message-card {
+  max-width: 85%;
+  min-width: 60%;
+}
+.message-time {
+  color: rgba(34, 87, 201, 0.678);
+  font-size: 8pt;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+/* Delete scrolls */
 ::-webkit-scrollbar {
   width: 10px;
 }
 html {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-.main-div {
-  width: 100%;
-  max-width: 380px;
-}
-.diviant {
-  font-size: 8pt;
-  position: absolute;
-  right: 0;
-  bottom: 0;
 }
 </style>

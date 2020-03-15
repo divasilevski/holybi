@@ -7,6 +7,8 @@ export default new Vuex.Store({
   state: {
     mode: undefined,
     user: undefined,
+    typing: [],
+    new_typing: undefined,
     messages: [],
     new_message: undefined,
     users: [],
@@ -25,6 +27,18 @@ export default new Vuex.Store({
     updateMessage: (state, message) => state.messages.push(message),
 
     updateMessages: (state, messages) => (state.messages = messages),
+
+    addTyping: (state, obj) => {
+      state.typing.push(obj);
+      state.new_typing = true;
+    },
+
+    updateTyping: (state, array) => (state.typing = array),
+
+    delTyping: (state, id) => {
+      state.typing = state.typing.filter(obj => obj.id != id);
+      state.new_typing = false;
+    },
 
     setDraw: (state, draw) => (state.draw = draw),
 
