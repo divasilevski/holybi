@@ -45,6 +45,9 @@ export default {
       this.$store.commit("setDrawing", drawing);
     });
 
+    this.socket.on("UPDATE_TYPING", typing => {
+      this.$store.commit("updateTyping", typing);
+    });
     // // Help emit to find vuex
     // this.socket.on("UPDATE_USERS", users => {
     //   this.$store.commit("SOCKET_UPDATE_USERS", users);
@@ -63,7 +66,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["mode", "user", "users", "new_message", "draw"])
+    ...mapState(["mode", "user", "users", "new_message", "draw", "typing", "new_typing"])
   },
 
   watch: {
@@ -84,6 +87,12 @@ export default {
     new_message() {
       this.socket.emit("ADD_MESSAGE", {
         message: this.new_message,
+        room: this.user.room
+      });
+    },
+    new_typing() {
+      this.socket.emit("UPDATE_TYPING", {
+        typing: this.typing,
         room: this.user.room
       });
     },

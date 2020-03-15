@@ -13,6 +13,9 @@ io.on("connection", socket => {
     socket.broadcast.emit("DRAW", draw);
   });
 
+  socket.on("UPDATE_TYPING", ({ typing, room }) => {
+    socket.to(room).emit("UPDATE_TYPING", typing);
+  });
   //
   socket.on("USER_JOINED", room => {
     const user = users.add(socket.id, room);
@@ -36,7 +39,7 @@ io.on("connection", socket => {
 
   socket.on("ADD_MESSAGE", ({ message, room }) => {
     const room_users = users.getByRoom(room);
-    
+
     if (room_users[0] && room_users[0].messages) {
       room_users[0].messages.push(message);
     }

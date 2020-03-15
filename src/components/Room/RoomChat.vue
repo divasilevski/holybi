@@ -6,6 +6,9 @@
       ref="message_block"
       :style="message_block_height"
     >
+      <div class="attenuation"></div>
+
+      <div class="indent"></div>
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
         <!-- NORMAL MESSAGE -->
@@ -53,12 +56,15 @@
         </v-container>
       </div>
 
-      <!-- TYPING -->
-      <!-- <div v-for="(t, index) in typing" :key="index-1000">
-        <v-container v-if="t.id !== user.id" class="d-flex justify-left pa-0">
+      <!-- TYPING  -->
+      <div v-for="(t, index) in typing" :key="index + 'typing'">
+        <v-container
+          v-if="t.id !== user.id"
+          class="d-flex justify-left pa-0 pt-1"
+        >
           <v-chip x-small color="white">{{ t.author }} печатает...</v-chip>
         </v-container>
-      </div> -->
+      </div>
 
       <!-- SPACE -->
       <div class="pa-1"></div>
@@ -95,17 +101,16 @@
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["user", "messages"])
+    ...mapState(["user", "messages", "typing"])
   },
 
   data: () => ({
+    const_scroll_height: 500,
     message: "",
     message_block_height: "",
-    typing: [
-      { author: "Голубь Инокентий", id: "" },
-      { author: "Енот", id: "" },
-      { author: "Пёсик", id: "12345" }
-    ]
+    user_typing: false,
+    user_typing_end: false,
+    timer: undefined
   }),
 
   mounted() {
@@ -114,8 +119,55 @@ export default {
   },
 
   watch: {
+    message(message) {
+      if (message.trim()) {
+        this.user_typing = true;
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+          this.user_typing = false;
+          this.user_typing_end = true;
+        }, 1800);
+      } else {
+        this.user_typing = false;
+        this.user_typing_end = true;
+        clearTimeout(this.timer);
+      }
+    },
+    user_typing(bool) {
+      if (bool)
+        this.$store.commit("addTyping", {
+          author: this.user.name,
+          id: this.user.id
+        });
+      else this.$store.commit("delTyping", this.user.id);
+    },
+    typing(value) {
+      // Если данный пользователь начал печатать
+      if (value.filter(obj => obj.id === this.user.id).length) return;
+      else {
+        // Если данный пользователь закончил печатать
+        if (this.user_typing_end) return;
+        else {
+          // Если страница скролла не ушла далеко
+          if (
+            this.$refs.message_block.scrollHeight -
+              this.$refs.message_block.scrollTop <
+            this.const_scroll_height
+          )
+            this.scrollTop();
+        }
+      }
+
+      this.user_typing_end = false;
+    },
     messages() {
-      this.scrollTop();
+      if (
+        this.$refs.message_block.scrollHeight -
+          this.$refs.message_block.scrollTop <
+          this.const_scroll_height ||
+        this.messages[this.messages.length - 1].id === this.user.id
+      )
+        this.scrollTop();
     }
   },
 
@@ -155,6 +207,17 @@ export default {
 .main-div {
   width: 100%;
   max-width: 380px;
+}
+.attenuation {
+  position: absolute;
+  height: 5px;
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(rgb(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+  z-index: 1;
+}
+.indent {
+  padding-top: 100px;
 }
 .message-card {
   max-width: 85%;
