@@ -4,11 +4,27 @@
     <div
       class="overflow-y-auto elevation-0"
       ref="message_block"
+      v-on:scroll="onScroll"
       :style="message_block_height"
     >
+      <v-fab-transition>
+        <v-btn
+          v-if="btn_scroll"
+          @click="scrollTop"
+          absolute
+          small
+          fab
+          style="bottom: 70px;"
+          class="elevation-1 button-outline"
+          color="light-blue lighten-1"
+        >
+          <v-icon>mdi-chevron-down</v-icon>
+        </v-btn>
+      </v-fab-transition>
       <div class="attenuation"></div>
 
       <div class="indent"></div>
+
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
         <!-- NORMAL MESSAGE -->
@@ -105,8 +121,9 @@ export default {
   },
 
   data: () => ({
-    const_scroll_height: 500,
+    const_scroll_height: 800,
     message: "",
+    btn_scroll: false,
     message_block_height: "",
     user_typing: false,
     user_typing_end: false,
@@ -149,11 +166,9 @@ export default {
         if (this.user_typing_end) return;
         else {
           // Если страница скролла не ушла далеко
-          if (
-            this.$refs.message_block.scrollHeight -
-              this.$refs.message_block.scrollTop <
-            this.const_scroll_height
-          )
+          const msgb = this.$refs.message_block;
+
+          if (msgb.scrollHeight - msgb.scrollTop < this.const_scroll_height)
             this.scrollTop();
         }
       }
@@ -161,10 +176,10 @@ export default {
       this.user_typing_end = false;
     },
     messages() {
+      const msgb = this.$refs.message_block;
+
       if (
-        this.$refs.message_block.scrollHeight -
-          this.$refs.message_block.scrollTop <
-          this.const_scroll_height ||
+        msgb.scrollHeight - msgb.scrollTop < this.const_scroll_height ||
         this.messages[this.messages.length - 1].id === this.user.id
       )
         this.scrollTop();
@@ -172,6 +187,14 @@ export default {
   },
 
   methods: {
+    onScroll() {
+      const msgb = this.$refs.message_block;
+
+      this.btn_scroll =
+        msgb.scrollHeight - msgb.scrollTop < this.const_scroll_height
+          ? false
+          : true;
+    },
     onResize() {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
     },
@@ -185,6 +208,7 @@ export default {
       setTimeout(() => {
         this.$refs.message_block.scrollTop = this.$refs.message_block.scrollHeight;
       }, 0);
+      this.btn_scroll = false;
     },
     sendMessage() {
       this.message = this.message.trim();
