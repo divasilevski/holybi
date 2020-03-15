@@ -206,7 +206,20 @@ export default {
     },
     scrollTop() {
       setTimeout(() => {
-        this.$refs.message_block.scrollTop = this.$refs.message_block.scrollHeight;
+        const fps = 50;
+        const time = 1000;
+        const msgb = this.$refs.message_block;
+        const distance = msgb.scrollHeight - msgb.scrollTop;
+        const speed = distance / fps;
+
+        const interval = setInterval(() => {
+          this.$refs.message_block.scrollTop += speed;
+        }, time / fps);
+
+        setTimeout(() => {
+          clearInterval(interval);
+        }, time);
+        
       }, 0);
       this.btn_scroll = false;
     },
