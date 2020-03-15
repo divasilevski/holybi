@@ -21,9 +21,8 @@
           <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
       </v-fab-transition>
-      <div class="attenuation"></div>
 
-      <div class="indent"></div>
+      <div class="indent"></div> 
 
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
@@ -248,14 +247,6 @@ export default {
 .main-div {
   width: 100%;
   max-width: 380px;
-}
-.attenuation {
-  position: absolute;
-  height: 5px;
-  width: 100%;
-  max-width: 380px;
-  background: linear-gradient(rgb(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
-  z-index: 1;
 }
 .indent {
   padding-top: 100px;
