@@ -45,7 +45,7 @@
         "
       >
         <v-icon>
-          mdi-message
+          mdi-forum
         </v-icon>
       </v-btn>
 
@@ -83,13 +83,13 @@
     <v-content v-resize="resize">
       <v-container class="pb-0 pt-0">
         <v-row class="d-flex justify-center">
-          <v-col v-if="bot_nav_board" cols="12" md="7" sm="12" class="pb-0 pt-0">
+          <v-col v-if="bot_nav_board" md="6" sm="6" class="pb-0 pt-0">
             <div class="d-flex justify-center">
               <RoomBoard />
             </div>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col v-if="bot_nav_chat" cols="12" md="5" sm="12" class="pb-0 pt-0">
+          <v-col v-if="!bot_nav" md="1"></v-col>
+          <v-col v-if="bot_nav_chat" md="5" sm="5" class="pb-0 pt-0">
             <div class="d-flex justify-center">
               <RoomChat />
             </div>
