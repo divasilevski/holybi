@@ -66,14 +66,22 @@ export default {
   },
 
   computed: {
-    ...mapState(["mode", "user", "users", "new_message", "draw", "typing", "new_typing"])
+    ...mapState([
+      "mode",
+      "user",
+      "users",
+      "new_message",
+      "draw",
+      "typing",
+      "new_typing"
+    ])
   },
 
   watch: {
     mode() {
       if (this.mode === "Room") {
         const room = window.document.location.search.replace("?id=", "");
-        this.socket.emit("USER_JOINED", room);
+        this.socket.emit("USER_JOINED", { room, device: this.$device });
       }
 
       if (this.mode === "Start" && this.user) {

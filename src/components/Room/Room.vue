@@ -68,14 +68,8 @@
           <v-list-item-content>
             <v-list-item-title
               >{{ u.name }}
-              <span v-if="user.name === u.name">
-                <v-icon small>mdi-account</v-icon>
-              </span>
-              <!--       console.log("mobile", this.$device.mobile);
-      console.log("windows", this.$device.windows);
-      console.log("android", this.$device.android); -->
-              <span v-if="u.king">
-                <v-icon small>mdi-crown</v-icon>
+              <span v-for="(i, index) in u.icons" :key="index + 'icons'">
+                <v-icon small>{{ i.icon }}</v-icon>
               </span>
             </v-list-item-title>
           </v-list-item-content>
@@ -86,13 +80,23 @@
     <v-content v-resize="resize">
       <v-container class="pb-0 pt-0">
         <v-row class="d-flex justify-center">
-          <v-col v-if="bot_nav_board" md="6" :sm="bot_nav ? '12' : '6'" class="pb-0 pt-0">
+          <v-col
+            v-if="bot_nav_board"
+            md="6"
+            :sm="bot_nav ? '12' : '6'"
+            class="pb-0 pt-0"
+          >
             <div class="d-flex justify-center">
               <RoomBoard />
             </div>
           </v-col>
           <v-col v-if="!bot_nav" md="1"></v-col>
-          <v-col v-if="bot_nav_chat" md="5" :sm="bot_nav ? '12' : '5'" class="pb-0 pt-0">
+          <v-col
+            v-if="bot_nav_chat"
+            md="5"
+            :sm="bot_nav ? '12' : '5'"
+            class="pb-0 pt-0"
+          >
             <div class="d-flex justify-center">
               <RoomChat />
             </div>

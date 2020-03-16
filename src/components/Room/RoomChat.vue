@@ -107,11 +107,12 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 const SCROLL_FPS = 30;
 const SCROLL_HEIGHT = 700;
 const SCROLL_TIME = 800;
 
-import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState(["user", "messages", "typing"])
@@ -245,11 +246,9 @@ export default {
     upgradeMessage(message) {
       const re = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
-      let subst = (match, p) => {
-        return (
-          '<a href="' + p + '" target="_blank">' + p.slice(0, 25) + "...</a>"
-        );
-      };
+      let subst = (match, p) =>
+        "'<a href='" + p + " target='_blank'>" + p.slice(0, 25) + "...</a>";
+
       return message
         .split("\n")
         .join("<br/>")
