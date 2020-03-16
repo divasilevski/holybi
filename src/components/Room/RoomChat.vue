@@ -194,31 +194,37 @@ export default {
 
     onResize() {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
-      scrollTop();
+      const msgb = this.$refs.message_block;
+      if (msgb) {
+        setTimeout(() => {
+          msgb.scrollTop = msgb.scrollHeight;
+        });
+      }
     },
 
     handleKeypress(event) {
-      if (!event.shiftKey && event.code === "Enter") {
-        event.preventDefault();
-        this.sendMessage();
+      if (!event.shiftKey && event.keyCode === 13) {
+        if (!this.$device.mobile) {
+          event.preventDefault();
+          this.sendMessage();
+        }
       }
     },
 
     scrollTop() {
       setTimeout(() => {
         const msgb = this.$refs.message_block;
-        if (msgb) {
-          const distance = msgb.scrollHeight - msgb.scrollTop;
-          const interval = distance / SCROLL_FPS;
 
-          const process = setInterval(() => {
-            msgb.scrollTop += interval;
-          }, SCROLL_TIME / SCROLL_FPS);
+        const distance = msgb.scrollHeight - msgb.scrollTop;
+        const interval = distance / SCROLL_FPS;
 
-          setTimeout(() => {
-            clearInterval(process);
-          }, SCROLL_TIME);
-        }
+        const process = setInterval(() => {
+          msgb.scrollTop += interval;
+        }, SCROLL_TIME / SCROLL_FPS);
+
+        setTimeout(() => {
+          clearInterval(process);
+        }, SCROLL_TIME);
       }, 0);
     },
 

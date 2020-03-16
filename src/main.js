@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import Clipboard from 'v-clipboard'
+import Device from "vue-device-detector"
 
 import router from './router'
 import store from './store'
@@ -9,6 +10,7 @@ import vuetify from './plugins/vuetify';
 import './registerServiceWorker'
 
 Vue.use(Clipboard)
+Vue.use(Device)
 
 Vue.config.productionTip = false
 
