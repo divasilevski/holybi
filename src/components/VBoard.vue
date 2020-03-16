@@ -28,6 +28,9 @@
 
 <script>
 import { mapState } from "vuex";
+
+const DRAW_DELAY = 10;
+
 export default {
   data: () => ({
     canvas: undefined,
@@ -51,23 +54,20 @@ export default {
       this.checkResize();
     }
 
-    this.canvas.addEventListener("mousedown", this.onMouseDown, false);
-    this.canvas.addEventListener("mouseup", this.onMouseUp, false);
-    this.canvas.addEventListener("mouseout", this.onMouseUp, false);
+    // LISTENERS
+    this.canvas.addEventListener("mousedown", this.onMouseDown);
+    this.canvas.addEventListener("mouseup", this.onMouseUp);
+    this.canvas.addEventListener("mouseout", this.onMouseUp);
     this.canvas.addEventListener(
       "mousemove",
-      this.throttle(this.onMouseMove, 10),
-      false
+      this.throttle(this.onMouseMove, DRAW_DELAY)
     );
-
-    //Touch support for mobile devices
-    this.canvas.addEventListener("touchstart", this.onMouseDown, false);
-    this.canvas.addEventListener("touchend", this.onMouseUp, false);
-    this.canvas.addEventListener("touchcancel", this.onMouseUp, false);
+    this.canvas.addEventListener("touchstart", this.onMouseDown);
+    this.canvas.addEventListener("touchend", this.onMouseUp);
+    this.canvas.addEventListener("touchcancel", this.onMouseUp);
     this.canvas.addEventListener(
       "touchmove",
-      this.throttle(this.onMouseMove, 10),
-      false
+      this.throttle(this.onMouseMove, DRAW_DELAY)
     );
   },
   methods: {
@@ -99,11 +99,12 @@ export default {
       e.preventDefault();
       this.drawing = true;
       const bcr = this.canvas.getBoundingClientRect();
-      this.current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
-      this.current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
+      this.current.x = e.clientX - bcr.x || e.changedTouches[0].clientX - bcr.x;
+      this.current.y = e.clientY - bcr.y || e.changedTouches[0].clientY - bcr.y;
     },
     onMouseUp(e) {
       e.preventDefault();
+
       if (!this.drawing) {
         return;
       }
@@ -114,8 +115,8 @@ export default {
       this.drawLine(
         this.current.x,
         this.current.y,
-        e.clientX - bcr.x || e.touches[0].clientX - bcr.x,
-        e.clientY - bcr.y || e.touches[0].clientY - bcr.y,
+        e.clientX - bcr.x || e.changedTouches[0].clientX - bcr.x,
+        e.clientY - bcr.y || e.changedTouches[0].clientY - bcr.y,
         this.current.color,
         true
       );
@@ -132,13 +133,13 @@ export default {
       this.drawLine(
         this.current.x,
         this.current.y,
-        e.clientX - bcr.x || e.touches[0].clientX - bcr.x,
-        e.clientY - bcr.y || e.touches[0].clientY - bcr.y,
+        e.clientX - bcr.x || e.changedTouches[0].clientX - bcr.x,
+        e.clientY - bcr.y || e.changedTouches[0].clientY - bcr.y,
         this.current.color,
         true
       );
-      this.current.x = e.clientX - bcr.x || e.touches[0].clientX - bcr.x;
-      this.current.y = e.clientY - bcr.y || e.touches[0].clientY - bcr.y;
+      this.current.x = e.clientX - bcr.x || e.changedTouches[0].clientX - bcr.x;
+      this.current.y = e.clientY - bcr.y || e.changedTouches[0].clientY - bcr.y;
     },
 
     // limit the number of events per second
@@ -186,6 +187,24 @@ export default {
     drawIt() {
       this.onDrawingEvent(this.drawIt);
     }
+  },
+
+  destroyed() {
+    // LISTENERS
+    this.canvas.removeEventListener("mousedown", this.onMouseDown);
+    this.canvas.removeEventListener("mouseup", this.onMouseUp);
+    this.canvas.removeEventListener("mouseout", this.onMouseUp);
+    this.canvas.removeEventListener(
+      "mousemove",
+      this.throttle(this.onMouseMove, DRAW_DELAY)
+    );
+    this.canvas.removeEventListener("touchstart", this.onMouseDown);
+    this.canvas.removeEventListener("touchend", this.onMouseUp);
+    this.canvas.removeEventListener("touchcancel", this.onMouseUp);
+    this.canvas.removeEventListener(
+      "touchmove",
+      this.throttle(this.onMouseMove, DRAW_DELAY)
+    );
   }
 };
 </script>
