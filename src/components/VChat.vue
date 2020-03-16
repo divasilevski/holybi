@@ -7,6 +7,7 @@
       v-on:scroll="onScroll"
       :style="message_block_height"
     >
+      <!-- SCROLL BUTTON -->
       <v-fab-transition>
         <v-btn
           v-if="btn_scroll"
@@ -86,7 +87,7 @@
     </div>
 
     <!-- INPUT FORM -->
-    <v-form class="pt-4" @submit.prevent fluid >
+    <v-form class="pt-4" @submit.prevent fluid>
       <v-textarea
         autofocus
         contenteditable="true"

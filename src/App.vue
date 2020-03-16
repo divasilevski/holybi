@@ -24,7 +24,7 @@ export default {
       this.$store.commit("setMode", "Start");
     }
 
-    // SOCKET LISTENING
+    // ROOM //
     this.socket.on("SET_USER", user => {
       this.$store.commit("setUser", user);
     });
@@ -33,6 +33,16 @@ export default {
       this.$store.commit("updateUsers", users);
     });
 
+    this.socket.on("GET_MESSAGE", str => {
+      console.log(str);
+    });
+
+    // BOARD //
+    this.socket.on("DRAW", drawing => {
+      this.$store.commit("setDrawing", drawing);
+    });
+
+    // CHAT //
     this.socket.on("UPDATE_MESSAGES", messages => {
       this.$store.commit("updateMessages", messages);
     });
@@ -41,43 +51,28 @@ export default {
       this.$store.commit("updateMessage", message);
     });
 
-    this.socket.on("DRAW", drawing => {
-      this.$store.commit("setDrawing", drawing);
-    });
-
     this.socket.on("UPDATE_TYPING", typing => {
       this.$store.commit("updateTyping", typing);
-    });
-    // // Help emit to find vuex
-    // this.socket.on("UPDATE_USERS", users => {
-    //   this.$store.commit("SOCKET_UPDATE_USERS", users);
-    // });
-    //
-    // this.socket.on("ACCESS_DENIED", () => {
-    //   this.$router.push("/error?message=access_denied");
-    // });
-    // this.socket.on("ROOM_FULL", () => {
-    //   this.$router.push("/error?message=room_full");
-    // });
-
-    this.socket.on("GET_MESSAGE", str => {
-      console.log(str);
     });
   },
 
   computed: {
     ...mapState([
+      // ROOM //
       "mode",
       "user",
       "users",
-      "new_message",
+      // BOARD //
       "draw",
-      "typing",
-      "new_typing"
+      // CHAT //
+      "new_message",
+      "new_typing",
+      "typing"
     ])
   },
 
   watch: {
+    // ROOM //
     mode() {
       if (this.mode === "Room") {
         const room = window.document.location.search.replace("?id=", "");
@@ -92,20 +87,25 @@ export default {
         this.$store.commit("clearData");
       }
     },
+
+    // BOARD //
+    draw() {
+      this.socket.emit("DRAW", { draw: this.draw, room: this.user.room });
+    },
+
+    // CHAT //
     new_message() {
       this.socket.emit("ADD_MESSAGE", {
         message: this.new_message,
         room: this.user.room
       });
     },
+
     new_typing() {
       this.socket.emit("UPDATE_TYPING", {
         typing: this.typing,
         room: this.user.room
       });
-    },
-    draw() {
-      this.socket.emit("DRAW", { draw: this.draw, room: this.user.room });
     }
   }
 };

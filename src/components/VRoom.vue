@@ -87,7 +87,7 @@
             class="pb-0 pt-0"
           >
             <div class="d-flex justify-center">
-              <RoomBoard />
+              <VBoard />
             </div>
           </v-col>
           <v-col v-if="!bot_nav" md="1"></v-col>
@@ -98,7 +98,7 @@
             class="pb-0 pt-0"
           >
             <div class="d-flex justify-center">
-              <RoomChat />
+              <VChat />
             </div>
           </v-col>
         </v-row>
@@ -108,8 +108,8 @@
 </template>
 
 <script>
-import RoomBoard from "./RoomBoard";
-import RoomChat from "./RoomChat";
+import VBoard from "./VBoard";
+import VChat from "./VChat";
 
 import { mapState } from "vuex";
 
@@ -149,8 +149,8 @@ export default {
     ...mapState(["user", "users"])
   },
   components: {
-    RoomBoard,
-    RoomChat
+    VBoard,
+    VChat
   }
 };
 </script>
