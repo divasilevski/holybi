@@ -10,7 +10,7 @@
       <v-fab-transition>
         <v-btn
           v-if="btn_scroll"
-          @click="scrollTop"
+          @click.prevent="scrollTop"
           absolute
           small
           fab
@@ -99,11 +99,7 @@
         rows="1"
         label="Написать сообщение..."
         type="text"
-        :append-icon="
-          message.trim()
-            ? 'mdi-send'
-            : undefined
-        "
+        :append-icon="message.trim() ? 'mdi-send' : undefined"
         @click:append="sendMessage"
       ></v-textarea>
     </v-form>
@@ -198,6 +194,7 @@ export default {
 
     onResize() {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
+      scrollTop();
     },
 
     handleKeypress(event) {
@@ -210,16 +207,18 @@ export default {
     scrollTop() {
       setTimeout(() => {
         const msgb = this.$refs.message_block;
-        const distance = msgb.scrollHeight - msgb.scrollTop;
-        const interval = distance / SCROLL_FPS;
+        if (msgb) {
+          const distance = msgb.scrollHeight - msgb.scrollTop;
+          const interval = distance / SCROLL_FPS;
 
-        const process = setInterval(() => {
-          msgb.scrollTop += interval;
-        }, SCROLL_TIME / SCROLL_FPS);
+          const process = setInterval(() => {
+            msgb.scrollTop += interval;
+          }, SCROLL_TIME / SCROLL_FPS);
 
-        setTimeout(() => {
-          clearInterval(process);
-        }, SCROLL_TIME);
+          setTimeout(() => {
+            clearInterval(process);
+          }, SCROLL_TIME);
+        }
       }, 0);
     },
 
