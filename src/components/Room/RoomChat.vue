@@ -22,7 +22,7 @@
         </v-btn>
       </v-fab-transition>
 
-      <div class="indent"></div> 
+      <div class="indent"></div>
 
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
@@ -99,11 +99,7 @@
         rows="1"
         label="Написать сообщение..."
         type="text"
-        :append-icon="
-          message.trim()
-            ? 'mdi-send'
-            : undefined
-        "
+        :append-icon="message.trim() ? 'mdi-send' : undefined"
         @click:append="sendMessage"
       ></v-textarea>
     </v-form>
@@ -198,6 +194,12 @@ export default {
 
     onResize() {
       this.message_block_height = `height: ${window.innerHeight - 140}px;`;
+      const msgb = this.$refs.message_block;
+      if (msgb) {
+        setTimeout(() => {
+          msgb.scrollTop = msgb.scrollHeight;
+        });
+      }
     },
 
     handleKeypress(event) {
