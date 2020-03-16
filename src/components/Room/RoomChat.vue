@@ -86,8 +86,9 @@
     </div>
 
     <!-- INPUT FORM -->
-    <v-form class="pt-4" @submit.prevent fluid>
+    <v-form class="pt-4" @submit.prevent fluid >
       <v-textarea
+        autofocus
         contenteditable="true"
         autocomplete="off"
         v-on:keypress="handleKeypress($event)"
