@@ -273,14 +273,11 @@ export default {
   min-width: 60%;
 }
 .message-time {
-  color: rgb(34, 87, 201);
+  color: #4e79d4;
   font-size: 8pt;
   position: absolute;
   right: 0;
   bottom: 0;
-  -moz-opacity: 0.7;
-  -khtml-opacity: 0.7;
-  opacity: 0.7;
 }
 /* Delete scrolls */
 ::-webkit-scrollbar {
