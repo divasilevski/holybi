@@ -60,7 +60,7 @@
               </div>
 
               <!-- Message -->
-              <div v-html="m.message.split('\n').join('<br/>')"></div>
+              <div v-html="upgradeMessage(m.message)"></div>
             </v-card-text>
           </v-card>
         </v-container>
@@ -121,9 +121,9 @@ export default {
     message: "",
     btn_scroll: false,
     message_block_height: "",
-    user_typing: false,
-    user_typing_end: false,
-    timer: undefined
+    typing_user: false,
+    typing_user_end: false,
+    typing_timer: undefined
   }),
 
   mounted() {
@@ -139,20 +139,20 @@ export default {
   watch: {
     message(message) {
       if (message.trim()) {
-        this.user_typing = true;
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-          this.user_typing = false;
-          this.user_typing_end = true;
+        this.typing_user = true;
+        clearTimeout(this.typing_timer);
+        this.typing_timer = setTimeout(() => {
+          this.typing_user = false;
+          this.typing_user_end = true;
         }, 1800);
       } else {
-        this.user_typing = false;
-        this.user_typing_end = true;
-        clearTimeout(this.timer);
+        this.typing_user = false;
+        this.typing_user_end = true;
+        clearTimeout(this.typing_timer);
       }
     },
 
-    user_typing(bool) {
+    typing_user(bool) {
       if (bool)
         this.$store.commit("addTyping", {
           author: this.user.name,
@@ -163,14 +163,14 @@ export default {
 
     typing(value) {
       if (!value.filter(obj => obj.id === this.user.id).length) {
-        if (!this.user_typing_end) {
+        if (!this.typing_user_end) {
           const msgb = this.$refs.message_block;
           if (msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT)
             this.scrollTop();
         }
       }
 
-      this.user_typing_end = false;
+      this.typing_user_end = false;
     },
 
     messages() {
@@ -240,6 +240,20 @@ export default {
         });
         this.message = "";
       }
+    },
+
+    upgradeMessage(message) {
+      const re = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+
+      let subst = (match, p) => {
+        return (
+          '<a href="' + p + '" target="_blank">' + p.slice(0, 25) + "...</a>"
+        );
+      };
+      return message
+        .split("\n")
+        .join("<br/>")
+        .replace(re, subst);
     }
   }
 };
