@@ -203,7 +203,9 @@ export default {
     },
 
     handleKeypress(event) {
-      if (!event.shiftKey && event.code === "Enter") {
+      const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
+      
+      if (!event.shiftKey && event.watch === 13 && !isMobile) {
         event.preventDefault();
         this.sendMessage();
       }
