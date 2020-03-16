@@ -1,24 +1,13 @@
 <template>
   <v-app>
-    <v-container v-if="mode === 'Loading'" class="fill-height justify-center">
-      <Loading />
-    </v-container>
-
-    <v-container
-      v-else-if="mode === 'Start'"
-      class="fill-height justify-center"
-    >
-      <Start />
-    </v-container>
-
-    <Room v-else-if="mode === 'Room'" />
+    <VStart v-if="mode === 'Start'"/>
+    <VRoom v-else-if="mode === 'Room'" />
   </v-app>
 </template>
 
 <script>
-import Loading from "../components/Loading";
-import Start from "../components/Start";
-import Room from "../components/Room/Room";
+import VStart from "../components/VStart";
+import VRoom from "../components/VRoom";
 
 import { mapState } from "vuex";
 
@@ -29,9 +18,8 @@ export default {
   },
 
   components: {
-    Loading,
-    Start,
-    Room
+    VStart,
+   VRoom
   }
 };
 </script>

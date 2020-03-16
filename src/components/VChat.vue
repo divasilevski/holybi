@@ -7,10 +7,11 @@
       v-on:scroll="onScroll"
       :style="message_block_height"
     >
+      <!-- SCROLL BUTTON -->
       <v-fab-transition>
         <v-btn
           v-if="btn_scroll"
-          @click="scrollTop"
+          @click.prevent="scrollTop"
           absolute
           small
           fab
@@ -60,7 +61,7 @@
               </div>
 
               <!-- Message -->
-              <div v-html="m.message.split('\n').join('<br/>')"></div>
+              <div v-html="upgradeMessage(m.message)"></div>
             </v-card-text>
           </v-card>
         </v-container>
@@ -88,6 +89,7 @@
     <!-- INPUT FORM -->
     <v-form class="pt-4" @submit.prevent fluid>
       <v-textarea
+        autofocus
         contenteditable="true"
         autocomplete="off"
         v-on:keypress="handleKeypress($event)"
@@ -107,11 +109,12 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 const SCROLL_FPS = 30;
 const SCROLL_HEIGHT = 700;
 const SCROLL_TIME = 800;
 
-import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState(["user", "messages", "typing"])
@@ -121,9 +124,9 @@ export default {
     message: "",
     btn_scroll: false,
     message_block_height: "",
-    user_typing: false,
-    user_typing_end: false,
-    timer: undefined
+    typing_user: false,
+    typing_user_end: false,
+    typing_timer: undefined
   }),
 
   mounted() {
@@ -139,20 +142,20 @@ export default {
   watch: {
     message(message) {
       if (message.trim()) {
-        this.user_typing = true;
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-          this.user_typing = false;
-          this.user_typing_end = true;
+        this.typing_user = true;
+        clearTimeout(this.typing_timer);
+        this.typing_timer = setTimeout(() => {
+          this.typing_user = false;
+          this.typing_user_end = true;
         }, 1800);
       } else {
-        this.user_typing = false;
-        this.user_typing_end = true;
-        clearTimeout(this.timer);
+        this.typing_user = false;
+        this.typing_user_end = true;
+        clearTimeout(this.typing_timer);
       }
     },
 
-    user_typing(bool) {
+    typing_user(bool) {
       if (bool)
         this.$store.commit("addTyping", {
           author: this.user.name,
@@ -163,14 +166,14 @@ export default {
 
     typing(value) {
       if (!value.filter(obj => obj.id === this.user.id).length) {
-        if (!this.user_typing_end) {
+        if (!this.typing_user_end) {
           const msgb = this.$refs.message_block;
           if (msgb.scrollHeight - msgb.scrollTop < SCROLL_HEIGHT)
             this.scrollTop();
         }
       }
 
-      this.user_typing_end = false;
+      this.typing_user_end = false;
     },
 
     messages() {
@@ -203,17 +206,18 @@ export default {
     },
 
     handleKeypress(event) {
-      const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
-      
-      if (!event.shiftKey && event.watch === 13 && !isMobile) {
-        event.preventDefault();
-        this.sendMessage();
+      if (!event.shiftKey && event.keyCode === 13) {
+        if (!this.$device.mobile) {
+          event.preventDefault();
+          this.sendMessage();
+        }
       }
     },
 
     scrollTop() {
       setTimeout(() => {
         const msgb = this.$refs.message_block;
+
         const distance = msgb.scrollHeight - msgb.scrollTop;
         const interval = distance / SCROLL_FPS;
 
@@ -239,6 +243,18 @@ export default {
         });
         this.message = "";
       }
+    },
+
+    upgradeMessage(message) {
+      const re = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+
+      let subst = (match, p) =>
+        "'<a href='" + p + " target='_blank'>" + p.slice(0, 25) + "...</a>";
+
+      return message
+        .split("\n")
+        .join("<br/>")
+        .replace(re, subst);
     }
   }
 };
@@ -257,14 +273,11 @@ export default {
   min-width: 60%;
 }
 .message-time {
-  color: rgb(34, 87, 201);
+  color: #4e79d4;
   font-size: 8pt;
   position: absolute;
   right: 0;
   bottom: 0;
-  -moz-opacity: 0.7;
-  -khtml-opacity: 0.7;
-  opacity: 0.7;
 }
 /* Delete scrolls */
 ::-webkit-scrollbar {

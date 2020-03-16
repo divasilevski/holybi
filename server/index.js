@@ -17,8 +17,8 @@ io.on("connection", socket => {
     socket.to(room).emit("UPDATE_TYPING", typing);
   });
   //
-  socket.on("USER_JOINED", room => {
-    const user = users.add(socket.id, room);
+  socket.on("USER_JOINED", ({ room, device }) => {
+    const user = users.add(socket.id, room, device);
     const room_users = users.getByRoom(room);
     socket.emit("SET_USER", user);
 

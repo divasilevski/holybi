@@ -7,8 +7,7 @@ class Users {
   }
 
   /** Добавление пользователя */
-  add(token, room) {
-
+  add(token, room, device) {
     const room_users = this.getByRoom(room);
 
     let category;
@@ -28,7 +27,29 @@ class Users {
       if (!room_users.map(e => e.name).includes(name)) break;
     }
 
-    const u = { id: token, name, category, room, king: !room_users.length};
+    let icons = [];
+    if (!room_users.length) {
+      icons.push({ icon: "mdi-crown" });
+    }
+
+    if (device.mobile) {
+      if (device.android) {
+        icons.push({ icon: "mdi-android" });
+      } else if (device.ios) {
+        icons.push({ icon: "mdi-apple" });
+      } else {
+        icons.push({ icon: "mdi-cellphone" });
+      }
+    }
+
+    const u = {
+      id: token,
+      name,
+      category,
+      room,
+      king: !room_users.length,
+      icons
+    };
 
     this.users.push(u);
     return u;

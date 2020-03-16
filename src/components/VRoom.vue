@@ -10,7 +10,7 @@
       <v-btn
         v-if="!bot_nav_board"
         icon
-        @click="
+        @click.prevent="
           bot_nav_board = true;
           bot_nav_chat = false;
         "
@@ -22,10 +22,10 @@
 
       <v-toolbar-title class="pl-0 align-center">
         <span v-if="bot_nav_board || !bot_nav" class="title">HOLYBI ROOM</span>
-        <span v-else class="title">CHAT</span>
-        <span v-if="!bot_nav || bot_nav_chat" class="title">
-          | {{ user ? user.name.toUpperCase() : "" }}</span
-        >
+        <span v-if="!bot_nav" class="title"> | </span>
+        <span v-if="!bot_nav || bot_nav_chat" class="title">{{
+          user ? user.name.toUpperCase() : ""
+        }}</span>
       </v-toolbar-title>
 
       <!-- COPY -->
@@ -39,7 +39,7 @@
       <v-btn
         v-if="bot_nav && bot_nav_board"
         icon
-        @click="
+        @click.prevent="
           bot_nav_board = false;
           bot_nav_chat = true;
         "
@@ -68,11 +68,8 @@
           <v-list-item-content>
             <v-list-item-title
               >{{ u.name }}
-              <span v-if="user.name === u.name">
-                <v-icon small>mdi-account</v-icon>
-              </span>
-              <span v-if="u.king">
-                <v-icon small>mdi-crown</v-icon>
+              <span v-for="(i, index) in u.icons" :key="index + 'icons'">
+                <v-icon small>{{ i.icon }}</v-icon>
               </span>
             </v-list-item-title>
           </v-list-item-content>
@@ -83,15 +80,25 @@
     <v-content v-resize="resize">
       <v-container class="pb-0 pt-0">
         <v-row class="d-flex justify-center">
-          <v-col v-if="bot_nav_board" md="6" sm="6" class="pb-0 pt-0">
+          <v-col
+            v-if="bot_nav_board"
+            md="6"
+            :sm="bot_nav ? '12' : '6'"
+            class="pb-0 pt-0"
+          >
             <div class="d-flex justify-center">
-              <RoomBoard />
+              <VBoard />
             </div>
           </v-col>
           <v-col v-if="!bot_nav" md="1"></v-col>
-          <v-col v-if="bot_nav_chat" md="5" sm="5" class="pb-0 pt-0">
+          <v-col
+            v-if="bot_nav_chat"
+            md="5"
+            :sm="bot_nav ? '12' : '5'"
+            class="pb-0 pt-0"
+          >
             <div class="d-flex justify-center">
-              <RoomChat />
+              <VChat />
             </div>
           </v-col>
         </v-row>
@@ -101,8 +108,8 @@
 </template>
 
 <script>
-import RoomBoard from "./RoomBoard";
-import RoomChat from "./RoomChat";
+import VBoard from "./VBoard";
+import VChat from "./VChat";
 
 import { mapState } from "vuex";
 
@@ -142,8 +149,8 @@ export default {
     ...mapState(["user", "users"])
   },
   components: {
-    RoomBoard,
-    RoomChat
+    VBoard,
+    VChat
   }
 };
 </script>
