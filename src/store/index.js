@@ -12,8 +12,10 @@ export default new Vuex.Store({
     messages: [],
     new_message: undefined,
     users: [],
+    picture: undefined,
     draw: [],
-    drawIt: undefined
+    drawIt: undefined,
+    last: 800
   },
   mutations: {
     setMode: (state, mode) => (state.mode = mode),
@@ -40,6 +42,10 @@ export default new Vuex.Store({
       state.new_typing = false;
     },
 
+    addPicture: (state, picture) => (state.picture = picture),
+
+    updateLast: (state, last) => (state.last = last),
+
     setDraw: (state, draw) => (state.draw = draw),
 
     setDrawing: (state, drawing) => (state.drawIt = drawing),
@@ -55,5 +61,10 @@ export default new Vuex.Store({
     }
   },
   actions: {},
-  modules: {}
+  modules: {},
+  getters: {
+    getPicture(state) {
+      return state.picture;
+    }
+  }
 });

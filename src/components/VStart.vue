@@ -12,6 +12,7 @@
       ></v-text-field>
 
       <v-btn class="ma-5" @click="clickEnter">Войти в комнату</v-btn>
+      <v-btn class="ma-5" @click="generate">Случайная комната</v-btn>
     </v-form>
   </v-container>
 </template>
@@ -34,6 +35,18 @@ export default {
         this.$store.commit("setMode", "Room");
         console.log(`Вход в комнату ${this.room_id}`);
       }
+    },
+    generate() {
+      var password = "";
+      var symbols =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678-+_*^$#№";
+      for (var i = 0; i < 10; i++) {
+        password += symbols.charAt(Math.floor(Math.random() * symbols.length));
+      }
+
+      this.$router.replace(`/?id=${password}`);
+      this.$store.commit("setMode", "Room");
+      console.log(`Вход в комнату ${password}`);
     }
   }
 };
