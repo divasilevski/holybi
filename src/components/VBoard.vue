@@ -32,7 +32,7 @@ import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState(["picture"])
+    ...mapState(["picture", "last"])
   },
 
   data: () => ({
@@ -41,56 +41,20 @@ export default {
   }),
 
   created() {
-    console.log("created");
     paper.install(window);
 
     this.checkResize();
   },
 
   mounted() {
-    console.log("mounted");
     paper.setup("canvas");
-    if (!project.last) {
-      project.last = this.size;
-    }
-
-    if (this.picture) {
-      project.clear();
-      project.importJSON(this.picture);
-
-      console.log(this.size, project.last);
-
-      let scale = this.size / project.last;
-      project.last = this.size;
-
-      const picture = project.activeLayer.children;
-      for (let i = 0; i < picture.length; i++) {
-        picture[i].position.x *= scale;
-        picture[i].position.y *= scale;
-        picture[i].scale(scale);
-      }
-    }
-
     const store = this.$store;
+    if (this.last) store.commit("updateLast", this.size);
+    this.reload();
 
     window.onload = function() {
       let tool = new Tool();
       let path;
-
-      view.onResize = function(event) {
-        // if (this.picture) {
-        //   project.importJSON(this.picture);
-        // }
-        // console.log(123);
-        // let scale = paper.view.size.width / project.last;
-        // project.last = paper.view.size.width;
-        // const picture = project.activeLayer.children;
-        // for (let i = 0; i < picture.length; i++) {
-        //   picture[i].position.x *= scale;
-        //   picture[i].position.y *= scale;
-        //   picture[i].scale(scale);
-        // }
-      };
 
       tool.onMouseDown = function(event) {
         event.preventDefault();
@@ -109,32 +73,22 @@ export default {
 
       tool.onMouseUp = function(event) {
         event.preventDefault();
-        path.viewSize = view.size.width;
         path.smooth();
         path.simplify();
 
         store.commit("addPicture", project.exportJSON());
+        store.commit("updateLast", view.size.width);
       };
     };
   },
 
   methods: {
-    checkResize() {
-      if (window.innerHeight - 140 < window.innerWidth) {
-        this.size = window.innerHeight - 140;
-      } else {
-        this.size = window.innerWidth;
-      }
-      this.board_size = `height: ${this.size}px; width: ${this.size}px`;
-
+    reload() {
       if (this.picture) {
         project.clear();
         project.importJSON(this.picture);
 
-        console.log(this.size, project.last);
-
-        let scale = this.size / project.last;
-        project.last = this.size;
+        let scale = this.size / this.last;
 
         const picture = project.activeLayer.children;
         for (let i = 0; i < picture.length; i++) {
@@ -143,6 +97,16 @@ export default {
           picture[i].scale(scale);
         }
       }
+    },
+    checkResize() {
+      if (window.innerHeight - 140 < window.innerWidth) {
+        this.size = window.innerHeight - 140;
+      } else {
+        this.size = window.innerWidth;
+      }
+      this.board_size = `height: ${this.size}px; width: ${this.size}px`;
+
+      this.reload();
     }
   }
 };

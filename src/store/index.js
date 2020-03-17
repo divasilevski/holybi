@@ -14,7 +14,8 @@ export default new Vuex.Store({
     users: [],
     picture: undefined,
     draw: [],
-    drawIt: undefined
+    drawIt: undefined,
+    last: 800
   },
   mutations: {
     setMode: (state, mode) => (state.mode = mode),
@@ -42,6 +43,8 @@ export default new Vuex.Store({
     },
 
     addPicture: (state, picture) => (state.picture = picture),
+
+    updateLast: (state, last) => (state.last = last),
 
     setDraw: (state, draw) => (state.draw = draw),
 
