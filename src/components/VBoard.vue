@@ -41,23 +41,36 @@ export default {
   }),
 
   created() {
+    console.log("created");
     paper.install(window);
+
     this.checkResize();
   },
 
   mounted() {
+    console.log("mounted");
     paper.setup("canvas");
-    if (this.picture) {
-
-      paper.project.activeLayer.importJSON(this.picture)
-      //this.picture.activeLayer.copyTo(project);
-
-      // const items = this.picture.activeLayer.children;
-      // for (let i = 0; i < items.length; i++) {
-      //   new Path(items[i]);
-      // }
+    if (!project.last) {
+      project.last = this.size;
     }
-    let last_w = this.size;
+
+    if (this.picture) {
+      project.clear();
+      project.importJSON(this.picture);
+
+      console.log(this.size, project.last);
+
+      let scale = this.size / project.last;
+      project.last = this.size;
+
+      const picture = project.activeLayer.children;
+      for (let i = 0; i < picture.length; i++) {
+        picture[i].position.x *= scale;
+        picture[i].position.y *= scale;
+        picture[i].scale(scale);
+      }
+    }
+
     const store = this.$store;
 
     window.onload = function() {
@@ -65,21 +78,18 @@ export default {
       let path;
 
       view.onResize = function(event) {
-        paper.view.setViewSize(
-          new paper.Size(this.size.width, this.size.height)
-        );
-
-        let scale = this.size.width / last_w;
-        last_w = this.size.width;
-
-        const picture = project.activeLayer.children;
-        for (let i = 0; i < picture.length; i++) {
-          picture[i].position.x *= scale;
-          picture[i].position.y *= scale;
-          picture[i].scale(scale);
-        }
-
-        console.log(project.activeLayer);
+        // if (this.picture) {
+        //   project.importJSON(this.picture);
+        // }
+        // console.log(123);
+        // let scale = paper.view.size.width / project.last;
+        // project.last = paper.view.size.width;
+        // const picture = project.activeLayer.children;
+        // for (let i = 0; i < picture.length; i++) {
+        //   picture[i].position.x *= scale;
+        //   picture[i].position.y *= scale;
+        //   picture[i].scale(scale);
+        // }
       };
 
       tool.onMouseDown = function(event) {
@@ -99,11 +109,11 @@ export default {
 
       tool.onMouseUp = function(event) {
         event.preventDefault();
-
+        path.viewSize = view.size.width;
         path.smooth();
         path.simplify();
 
-        store.commit("addPicture", project.activeLayer.exportJSON());
+        store.commit("addPicture", project.exportJSON());
       };
     };
   },
@@ -116,6 +126,23 @@ export default {
         this.size = window.innerWidth;
       }
       this.board_size = `height: ${this.size}px; width: ${this.size}px`;
+
+      if (this.picture) {
+        project.clear();
+        project.importJSON(this.picture);
+
+        console.log(this.size, project.last);
+
+        let scale = this.size / project.last;
+        project.last = this.size;
+
+        const picture = project.activeLayer.children;
+        for (let i = 0; i < picture.length; i++) {
+          picture[i].position.x *= scale;
+          picture[i].position.y *= scale;
+          picture[i].scale(scale);
+        }
+      }
     }
   }
 };
