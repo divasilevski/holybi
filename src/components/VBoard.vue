@@ -1,10 +1,16 @@
 <template>
   <div v-resize="checkResize">
-    <canvas class="whiteboard" :style="board_size"></canvas>
+    <canvas
+      id="canvas"
+
+      class="whiteboard"
+      :style="board_size"
+      resize
+    ></canvas>
 
     <v-toolbar dense flat class="pa-0">
       <v-btn-toggle class="pa-0" color="primary" dense group multiple>
-        <!-- <v-btn :value="1" text>
+        <v-btn :value="1" text>
           <v-icon>mdi-format-bold</v-icon>
         </v-btn>
 
@@ -18,7 +24,7 @@
 
         <v-btn :value="4" text>
           <v-icon>mdi-format-color-fill</v-icon>
-        </v-btn> -->
+        </v-btn>
       </v-btn-toggle>
 
       <div class="mx-4"></div>
@@ -27,6 +33,7 @@
 </template>
 
 <script>
+import paper from "paper"; //
 import { mapState } from "vuex";
 
 const DRAW_DELAY = 10;
@@ -34,6 +41,7 @@ const DRAW_DELAY = 10;
 export default {
   data: () => ({
     canvas: undefined,
+    img_data: undefined,
     context: undefined,
     current: {
       color: "black"
@@ -43,34 +51,55 @@ export default {
     board_size: "height: 0px",
     save_func: undefined
   }),
-  created() {},
+  created() {
+    paper.install(window); //
+  },
   mounted() {
-    this.canvas = document.getElementsByClassName("whiteboard")[0];
-    this.context = document
-      .getElementsByClassName("whiteboard")[0]
-      .getContext("2d");
+    paper.setup("canvas");
+    // Create a simple drawing tool:
+    let tool = new Tool();
+    let path;
 
-    if (this.canvas) {
-      this.checkResize();
-    }
+    // Define a mousedown and mousedrag handler
+    tool.onMouseDown = function(event) {
+      console.log("gaa", event)
+      path = new Path();
+      path.strokeColor = "black";
+      path.add(event.point);
+    };
 
-    // LISTENERS
-    this.canvas.addEventListener("mousedown", this.onMouseDown);
-    this.canvas.addEventListener("mouseup", this.onMouseUp);
-    this.canvas.addEventListener("mouseout", this.onMouseUp);
-    this.canvas.addEventListener(
-      "mousemove",
-      this.throttle(this.onMouseMove, DRAW_DELAY)
-    );
-    this.canvas.addEventListener("touchstart", this.onMouseDown);
-    this.canvas.addEventListener("touchend", this.onMouseUp);
-    this.canvas.addEventListener("touchcancel", this.onMouseUp);
-    this.canvas.addEventListener(
-      "touchmove",
-      this.throttle(this.onMouseMove, DRAW_DELAY)
-    );
+    tool.onMouseDrag = function(event) {
+      console.log("go", event)
+      path.add(event.point);
+    };
+
+    // this.canvas = document.getElementsByClassName("whiteboard")[0];
+    // this.context = document
+    //   .getElementsByClassName("whiteboard")[0]
+    //   .getContext("2d");
+
+    // if (this.canvas) {
+    //   this.checkResize();
+    // }
+
+    // // LISTENERS
+    // this.canvas.addEventListener("mousedown", this.onMouseDown);
+    // this.canvas.addEventListener("mouseup", this.onMouseUp);
+    // this.canvas.addEventListener("mouseout", this.onMouseUp);
+    // this.canvas.addEventListener(
+    //   "mousemove",
+    //   this.throttle(this.onMouseMove, DRAW_DELAY)
+    // );
+    // this.canvas.addEventListener("touchstart", this.onMouseDown);
+    // this.canvas.addEventListener("touchend", this.onMouseUp);
+    // this.canvas.addEventListener("touchcancel", this.onMouseUp);
+    // this.canvas.addEventListener(
+    //   "touchmove",
+    //   this.throttle(this.onMouseMove, DRAW_DELAY)
+    // );
   },
   methods: {
+
     drawLine(x0, y0, x1, y1, color, emit) {
       this.context.beginPath();
       this.context.moveTo(x0, y0);
@@ -94,6 +123,8 @@ export default {
         y1: y1 / h,
         color: color
       });
+
+      this.img_data = this.canvas.canvas;
     },
     onMouseDown(e) {
       e.preventDefault();
@@ -178,6 +209,16 @@ export default {
           this.canvas.height = window.innerWidth;
         }
       }
+
+      if (this.img_data) {
+        this.context.drawImage(
+          this.img_data,
+          0,
+          0,
+          this.canvas.width,
+          this.canvas.heigh
+        );
+      }
     }
   },
   computed: {
@@ -190,21 +231,7 @@ export default {
   },
 
   destroyed() {
-    // LISTENERS
-    this.canvas.removeEventListener("mousedown", this.onMouseDown);
-    this.canvas.removeEventListener("mouseup", this.onMouseUp);
-    this.canvas.removeEventListener("mouseout", this.onMouseUp);
-    this.canvas.removeEventListener(
-      "mousemove",
-      this.throttle(this.onMouseMove, DRAW_DELAY)
-    );
-    this.canvas.removeEventListener("touchstart", this.onMouseDown);
-    this.canvas.removeEventListener("touchend", this.onMouseUp);
-    this.canvas.removeEventListener("touchcancel", this.onMouseUp);
-    this.canvas.removeEventListener(
-      "touchmove",
-      this.throttle(this.onMouseMove, DRAW_DELAY)
-    );
+    // LIST
   }
 };
 </script>
