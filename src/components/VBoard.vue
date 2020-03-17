@@ -1,14 +1,8 @@
 <template>
   <div v-resize="checkResize">
-    <canvas
-      id="canvas"
+    <canvas id="canvas" :style="board_size" resize="true"></canvas>
 
-      class="whiteboard"
-      :style="board_size"
-      resize
-    ></canvas>
-
-    <v-toolbar dense flat class="pa-0">
+    <!-- <v-toolbar dense flat class="pa-0">
       <v-btn-toggle class="pa-0" color="primary" dense group multiple>
         <v-btn :value="1" text>
           <v-icon>mdi-format-bold</v-icon>
@@ -28,7 +22,7 @@
       </v-btn-toggle>
 
       <div class="mx-4"></div>
-    </v-toolbar>
+    </v-toolbar> -->
   </div>
 </template>
 
@@ -48,58 +42,66 @@ export default {
     },
     drawing: false,
     message: "",
-    board_size: "height: 0px",
-    save_func: undefined
+    board_size: "",
+    save_func: undefined,
+    path: undefined,
+    size: {
+      width: 800,
+      height: 800
+    }
   }),
   created() {
     paper.install(window); //
+    this.checkResize();
   },
   mounted() {
+    //let actual_ratio = $("#canvas").innerWidth() / original_size.width;
+    //let last_width = $("#canvas").innerWidth();
+
     paper.setup("canvas");
-    // Create a simple drawing tool:
-    let tool = new Tool();
-    let path;
+    let last_w = this.size.width;
 
-    // Define a mousedown and mousedrag handler
-    tool.onMouseDown = function(event) {
-      console.log("gaa", event)
-      path = new Path();
-      path.strokeColor = "black";
-      path.add(event.point);
+    window.onload = function() {
+      // Create a simple drawing tool:
+
+      let tool = new Tool();
+      let path;
+
+      view.onResize = function(event) {
+        paper.view.setViewSize(
+          new paper.Size(this.size.width, this.size.height)
+        );
+
+        let scale = this.size.width / last_w;
+        last_w = this.size.width;
+
+        path.position = paper.view.center;
+        path.scale(scale);
+      };
+
+      tool.onMouseDown = function(event) {
+        event.preventDefault();
+
+        //
+        path = new Path();
+        path.strokeColor = "black";
+      };
+
+      tool.onMouseDrag = function(event) {
+        event.preventDefault();
+        path.add(event.point);
+      };
+
+      tool.onMouseUp = function(event) {
+        event.preventDefault();
+
+        //
+        path.smooth();
+        path.simplify();
+      };
     };
-
-    tool.onMouseDrag = function(event) {
-      console.log("go", event)
-      path.add(event.point);
-    };
-
-    // this.canvas = document.getElementsByClassName("whiteboard")[0];
-    // this.context = document
-    //   .getElementsByClassName("whiteboard")[0]
-    //   .getContext("2d");
-
-    // if (this.canvas) {
-    //   this.checkResize();
-    // }
-
-    // // LISTENERS
-    // this.canvas.addEventListener("mousedown", this.onMouseDown);
-    // this.canvas.addEventListener("mouseup", this.onMouseUp);
-    // this.canvas.addEventListener("mouseout", this.onMouseUp);
-    // this.canvas.addEventListener(
-    //   "mousemove",
-    //   this.throttle(this.onMouseMove, DRAW_DELAY)
-    // );
-    // this.canvas.addEventListener("touchstart", this.onMouseDown);
-    // this.canvas.addEventListener("touchend", this.onMouseUp);
-    // this.canvas.addEventListener("touchcancel", this.onMouseUp);
-    // this.canvas.addEventListener(
-    //   "touchmove",
-    //   this.throttle(this.onMouseMove, DRAW_DELAY)
-    // );
   },
   methods: {
-
     drawLine(x0, y0, x1, y1, color, emit) {
       this.context.beginPath();
       this.context.moveTo(x0, y0);
@@ -196,28 +198,12 @@ export default {
       if (window.innerHeight - 140 < window.innerWidth) {
         this.board_size = `height: ${window.innerHeight -
           140}px; width: ${window.innerHeight - 140}px`;
-
-        if (this.canvas) {
-          this.canvas.width = window.innerHeight - 140;
-          this.canvas.height = window.innerHeight - 140;
-        }
+        this.size.width = window.innerHeight - 140;
+        this.size.height = window.innerHeight - 140;
       } else {
         this.board_size = `height: ${window.innerWidth}px; width: ${window.innerWidth}px`;
-
-        if (this.canvas) {
-          this.canvas.width = window.innerWidth;
-          this.canvas.height = window.innerWidth;
-        }
-      }
-
-      if (this.img_data) {
-        this.context.drawImage(
-          this.img_data,
-          0,
-          0,
-          this.canvas.width,
-          this.canvas.heigh
-        );
+        this.size.width = window.innerHeight - 140;
+        this.size.height = window.innerHeight - 140;
       }
     }
   },
@@ -236,6 +222,8 @@ export default {
 };
 </script>
 <style lang="sass">
-.whiteboard
+canvas[resize]
+    width: 100%
+    height: 100%
     background: #E9FFFD
 </style>

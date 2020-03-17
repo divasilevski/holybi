@@ -76,7 +76,7 @@
             md="6"
             :sm="is_nav ? '12' : '6'"
           >
-            <div class="d-flex justify-center">
+            <div class="d-flex justify-center" style="height: 100%; width:100%">
               <VBoard />
             </div>
           </v-col>
