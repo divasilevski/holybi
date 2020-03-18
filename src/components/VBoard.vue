@@ -33,7 +33,7 @@ import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState(["picture", "last", "resizing"])
+    ...mapState(["last", "project"])
   },
 
   data: () => ({
@@ -83,27 +83,26 @@ export default {
       if (this.toggle === "pen") {
         path.smooth();
         path.simplify();
-        
       } else {
         const children = project.activeLayer.children;
         for (let i = children.length - 1; i >= 0; i--) {
-          if (path.getIntersections(children[i]).length){
-            children[i].remove()
+          if (path.getIntersections(children[i]).length) {
+            children[i].remove();
           }
         }
         path.remove();
       }
 
-      store.commit("addPicture", project.exportJSON());
+      store.commit("newProject", project.exportJSON());
       store.commit("updateLast", view.size.width);
     };
   },
 
   methods: {
     reload() {
-      if (this.picture) {
+      if (this.project) {
         project.clear();
-        project.importJSON(this.picture);
+        project.importJSON(this.project);
 
         view.viewSize = new Size(this.size, this.size);
 
@@ -128,7 +127,16 @@ export default {
     },
     clearCanvas() {
       project.clear();
-      this.$store.commit("addPicture", project.exportJSON());
+      this.$store.commit(
+        "newProject",
+        JSON.stringify([["Layer", { applyMatrix: true }]])
+      );
+    }
+  },
+
+  watch: {
+    project(value) {
+      this.reload();
     }
   }
 };

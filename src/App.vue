@@ -41,8 +41,9 @@ export default {
     });
 
     // BOARD //
-    this.socket.on("DRAW", drawing => {
-      this.$store.commit("setDrawing", drawing);
+    this.socket.on("UPDATE_PROJECT", ({ project, last }) => {
+      this.$store.commit("updateLast", last);
+      this.$store.commit("updateProject", project);
     });
 
     // CHAT //
@@ -66,7 +67,8 @@ export default {
       "user",
       "users",
       // BOARD //
-      "draw",
+      "new_project",
+      "last",
       // CHAT //
       "new_message",
       "new_typing",
@@ -92,8 +94,12 @@ export default {
     },
 
     // BOARD //
-    draw() {
-      this.socket.emit("DRAW", { draw: this.draw, room: this.user.room });
+    new_project(value) {
+      this.socket.emit("UPDATE_PROJECT", {
+        project: value,
+        room: this.user.room,
+        last: this.last
+      });
     },
 
     // CHAT //
