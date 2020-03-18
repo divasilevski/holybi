@@ -71,7 +71,7 @@
         <v-row class="d-flex justify-center">
           <!-- Board -->
           <v-col
-            v-if="is_board"
+            v-show="is_board"
             class="pb-0 pt-0"
             md="6"
             :sm="is_nav ? '12' : '6'"
@@ -86,7 +86,7 @@
 
           <!-- Chat -->
           <v-col
-            v-if="is_chat"
+            v-show="is_chat"
             class="pb-0 pt-0"
             md="5"
             :sm="is_nav ? '12' : '5'"

@@ -6,6 +6,7 @@
 
 <script>
 import io from "socket.io-client";
+import paper from "paper";
 import { mapState } from "vuex";
 
 export default {
@@ -17,6 +18,8 @@ export default {
   }),
 
   created() {
+    paper.install(window);
+
     // LOAD APP
     if (window.document.location.search) {
       this.$store.commit("setMode", "Room");

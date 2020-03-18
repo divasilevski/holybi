@@ -50,10 +50,13 @@ export default new Vuex.Store({
 
     setDrawing: (state, drawing) => (state.drawIt = drawing),
 
+
     clearData(state) {
       state.user = undefined;
       state.messages = [];
       state.users = [];
+      state.picture =  undefined;
+      state.last = 800;
     },
 
     SOCKET_newMessage(state, message) {
