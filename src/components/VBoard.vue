@@ -3,27 +3,28 @@
     <canvas id="canvas" :style="board_size" resize="true"></canvas>
 
     <v-toolbar dense flat class="pa-0">
-      <v-btn-toggle class="pa-0" color="primary" dense group multiple>
-        <v-btn :value="1" text @click.prevent="clearCanvas">
-          <v-icon>mdi-delete</v-icon>
+      <v-btn-toggle
+        v-model="toggle"
+        class="pa-0"
+        color="primary"
+        dense
+        group
+        mandatory
+      >
+        <v-btn :value="'pen'">
+          <v-icon>mdi-pen</v-icon>
         </v-btn>
-      </v-btn-toggle>
-    </v-toolbar>
-    <!--
-        <v-btn :value="2" text>
+        <v-btn :value="'erase'">
           <v-icon>mdi-eraser</v-icon>
         </v-btn>
-
-        <v-btn :value="3" text>
-          <v-icon>mdi-pensil</v-icon>
-        </v-btn>
-
-        <v-btn :value="4" text>
-          <v-icon>mdi-format-color-fill</v-icon>
-        </v-btn>
       </v-btn-toggle>
 
-      <div class="mx-4"></div>  -->
+      <v-spacer></v-spacer>
+
+      <v-btn icon @click.prevent="clearCanvas">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </v-toolbar>
   </div>
 </template>
 
@@ -36,19 +37,17 @@ export default {
   },
 
   data: () => ({
+    toggle: undefined,
     board_size: "",
     size: 800
   }),
 
   created() {
-    console.log("created");
     this.checkResize();
   },
 
   mounted() {
     this.reload();
-
-    console.log("mounted");
     paper.setup("canvas");
     const store = this.$store;
     if (this.last) store.commit("updateLast", this.size);
@@ -56,25 +55,44 @@ export default {
     let tool = new Tool();
     let path;
 
-    tool.onMouseDown = function(event) {
+    tool.onMouseDown = event => {
       event.preventDefault();
 
       path = new Path();
-      path.strokeColor = "black";
-      path.strokeWidth = 2;
-      path.strokeCap = "round";
-      path.strokeJoin = "round";
+
+      if (this.toggle === "pen") {
+        path.strokeColor = "black";
+        path.strokeWidth = 2;
+        path.strokeCap = "round";
+        path.strokeJoin = "round";
+      } else {
+        path.strokeColor = "black";
+        path.strokeWidth = 2;
+        path.opacity = 0.2;
+      }
     };
 
-    tool.onMouseDrag = function(event) {
+    tool.onMouseDrag = event => {
       event.preventDefault();
       path.add(event.point);
     };
 
-    tool.onMouseUp = function(event) {
+    tool.onMouseUp = event => {
       event.preventDefault();
-      path.smooth();
-      path.simplify();
+
+      if (this.toggle === "pen") {
+        path.smooth();
+        path.simplify();
+        
+      } else {
+        const children = project.activeLayer.children;
+        for (let i = children.length - 1; i >= 0; i--) {
+          if (path.getIntersections(children[i]).length){
+            children[i].remove()
+          }
+        }
+        path.remove();
+      }
 
       store.commit("addPicture", project.exportJSON());
       store.commit("updateLast", view.size.width);
