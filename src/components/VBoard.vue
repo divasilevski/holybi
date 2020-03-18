@@ -105,9 +105,6 @@ export default {
         project.importJSON(this.project);
 
         view.viewSize = new Size(this.size, this.size);
-
-        console.log("ds", this.size, view.viewSize);
-
         let scale = this.size / this.last;
 
         const picture = project.activeLayer.children;
