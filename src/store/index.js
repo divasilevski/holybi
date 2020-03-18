@@ -14,7 +14,8 @@ export default new Vuex.Store({
     users: [],
     project: undefined,
     new_project: undefined,
-    last: 800
+    last: 800,
+    drawing: false
   },
   mutations: {
     setMode: (state, mode) => (state.mode = mode),
@@ -28,6 +29,8 @@ export default new Vuex.Store({
     updateMessage: (state, message) => state.messages.push(message),
 
     updateMessages: (state, messages) => (state.messages = messages),
+
+    drawing: (state, drawing) => (state.drawing = drawing),
 
     addTyping: (state, obj) => {
       state.typing.push(obj);

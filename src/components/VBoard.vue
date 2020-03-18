@@ -33,7 +33,7 @@ import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState(["last", "project"])
+    ...mapState(["last", "project", "drawing"])
   },
 
   data: () => ({
@@ -106,6 +106,8 @@ export default {
 
         view.viewSize = new Size(this.size, this.size);
 
+        console.log("ds", this.size, view.viewSize);
+
         let scale = this.size / this.last;
 
         const picture = project.activeLayer.children;
@@ -137,6 +139,12 @@ export default {
   watch: {
     project(value) {
       this.reload();
+    },
+    drawing(value) {
+      if (value) {
+        this.reload();
+        this.$store.commit("drawing", false);
+      }
     }
   }
 };

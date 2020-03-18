@@ -45,6 +45,8 @@
       v-if="is_nav || is_chat"
       v-model="drawer"
       disable-onResize-watcher
+      disable-route-watcher
+      touchless
       clipped
       right
       app
@@ -135,6 +137,7 @@ export default {
     },
 
     clickToBoard() {
+      this.$store.commit("drawing", true)
       this.is_board = true;
       this.is_chat = false;
     },
