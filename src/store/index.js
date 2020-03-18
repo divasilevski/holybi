@@ -12,10 +12,10 @@ export default new Vuex.Store({
     messages: [],
     new_message: undefined,
     users: [],
-    picture: undefined,
-    draw: [],
-    drawIt: undefined,
-    last: 800
+    project: undefined,
+    new_project: undefined,
+    last: 800,
+    drawing: false
   },
   mutations: {
     setMode: (state, mode) => (state.mode = mode),
@@ -30,6 +30,8 @@ export default new Vuex.Store({
 
     updateMessages: (state, messages) => (state.messages = messages),
 
+    drawing: (state, drawing) => (state.drawing = drawing),
+
     addTyping: (state, obj) => {
       state.typing.push(obj);
       state.new_typing = true;
@@ -42,18 +44,21 @@ export default new Vuex.Store({
       state.new_typing = false;
     },
 
-    addPicture: (state, picture) => (state.picture = picture),
+    updateProject: (state, project) => (state.project = project),
+
+    newProject: (state, new_project) => {
+      state.project = new_project;
+      state.new_project = new_project;
+    },
 
     updateLast: (state, last) => (state.last = last),
-
-    setDraw: (state, draw) => (state.draw = draw),
-
-    setDrawing: (state, drawing) => (state.drawIt = drawing),
 
     clearData(state) {
       state.user = undefined;
       state.messages = [];
       state.users = [];
+      state.picture = undefined;
+      state.last = 800;
     },
 
     SOCKET_newMessage(state, message) {

@@ -9,8 +9,8 @@ const users = require("./users")();
 
 io.on("connection", socket => {
   //
-  socket.on("DRAW", ({ draw, room }) => {
-    socket.broadcast.emit("DRAW", draw);
+  socket.on("UPDATE_PROJECT", ({ project, last, room }) => {
+    socket.to(room).broadcast.emit("UPDATE_PROJECT", { project, last });
   });
 
   socket.on("UPDATE_TYPING", ({ typing, room }) => {

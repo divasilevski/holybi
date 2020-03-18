@@ -2,91 +2,111 @@
   <div v-resize="checkResize">
     <canvas id="canvas" :style="board_size" resize="true"></canvas>
 
-    <!-- <v-toolbar dense flat class="pa-0">
-      <v-btn-toggle class="pa-0" color="primary" dense group multiple>
-        <v-btn :value="1" text>
-          <v-icon>mdi-format-bold</v-icon>
+    <v-toolbar dense flat class="pa-0">
+      <v-btn-toggle
+        v-model="toggle"
+        class="pa-0"
+        color="primary"
+        dense
+        group
+        mandatory
+      >
+        <v-btn :value="'pen'">
+          <v-icon>mdi-pen</v-icon>
         </v-btn>
-
-        <v-btn :value="2" text>
-          <v-icon>mdi-format-italic</v-icon>
-        </v-btn>
-
-        <v-btn :value="3" text>
-          <v-icon>mdi-format-underline</v-icon>
-        </v-btn>
-
-        <v-btn :value="4" text>
-          <v-icon>mdi-format-color-fill</v-icon>
+        <v-btn :value="'erase'">
+          <v-icon>mdi-eraser</v-icon>
         </v-btn>
       </v-btn-toggle>
 
-      <div class="mx-4"></div>
-    </v-toolbar> -->
+      <v-spacer></v-spacer>
+
+      <v-btn icon @click.prevent="clearCanvas">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </v-toolbar>
   </div>
 </template>
 
 <script>
-import paper from "paper";
 import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState(["picture", "last"])
+    ...mapState(["last", "project", "drawing"])
   },
 
   data: () => ({
+    toggle: undefined,
     board_size: "",
     size: 800
   }),
 
   created() {
-    paper.install(window);
-
     this.checkResize();
   },
 
   mounted() {
+    this.reload();
     paper.setup("canvas");
     const store = this.$store;
     if (this.last) store.commit("updateLast", this.size);
-    this.reload();
 
-    window.onload = function() {
-      let tool = new Tool();
-      let path;
+    let tool = new Tool();
+    let path;
 
-      tool.onMouseDown = function(event) {
-        event.preventDefault();
+    tool.onMouseDown = event => {
+      event.preventDefault();
 
-        path = new Path();
+      path = new Path();
+
+      if (this.toggle === "pen") {
         path.strokeColor = "black";
         path.strokeWidth = 2;
         path.strokeCap = "round";
         path.strokeJoin = "round";
-      };
+      } else {
+        path.strokeColor = "black";
+        path.strokeWidth = 2;
+        path.opacity = 0.2;
+      }
+    };
 
-      tool.onMouseDrag = function(event) {
-        event.preventDefault();
-        path.add(event.point);
-      };
+    tool.onMouseDrag = event => {
+      event.preventDefault();
+      path.add(event.point);
+    };
 
-      tool.onMouseUp = function(event) {
-        event.preventDefault();
+    tool.onMouseUp = event => {
+      event.preventDefault();
+
+      if (this.toggle === "pen") {
         path.smooth();
         path.simplify();
+      } else {
+        const children = project.activeLayer.children;
+        for (let i = children.length - 1; i >= 0; i--) {
+          if (path.getIntersections(children[i]).length) {
+            children[i].remove();
+          }
+        }
+        path.remove();
+      }
 
-        store.commit("addPicture", project.exportJSON());
-        store.commit("updateLast", view.size.width);
-      };
+      store.commit("newProject", project.exportJSON());
+      store.commit("updateLast", view.size.width);
     };
   },
 
   methods: {
     reload() {
-      if (this.picture) {
+      if (this.project) {
         project.clear();
-        project.importJSON(this.picture);
+        project.importJSON(this.project);
+
+        view.viewSize = new Size(this.size, this.size);
+
+        console.log("ds", this.size, view.viewSize);
 
         let scale = this.size / this.last;
 
@@ -105,8 +125,26 @@ export default {
         this.size = window.innerWidth;
       }
       this.board_size = `height: ${this.size}px; width: ${this.size}px`;
-
       this.reload();
+    },
+    clearCanvas() {
+      project.clear();
+      this.$store.commit(
+        "newProject",
+        JSON.stringify([["Layer", { applyMatrix: true }]])
+      );
+    }
+  },
+
+  watch: {
+    project(value) {
+      this.reload();
+    },
+    drawing(value) {
+      if (value) {
+        this.reload();
+        this.$store.commit("drawing", false);
+      }
     }
   }
 };
