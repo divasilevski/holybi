@@ -281,7 +281,7 @@ export default {
 }
 /* Delete scrolls */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 0px;
 }
 html {
   -ms-overflow-style: none;
