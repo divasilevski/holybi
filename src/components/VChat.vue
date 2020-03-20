@@ -22,8 +22,9 @@
           <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
       </v-fab-transition>
-
-      <div class="indent"></div>
+    
+      <v-img src="../assets/logo.png" contain height="152px" class="pa-10"></v-img>
+      
 
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">
@@ -264,9 +265,6 @@ export default {
 .main-div {
   width: 100%;
   max-width: 380px;
-}
-.indent {
-  padding-top: 100px;
 }
 .message-card {
   max-width: 85%;
