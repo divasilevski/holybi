@@ -1,24 +1,29 @@
 <template>
   <v-app>
     <!-- APP BAR -->
-    <v-app-bar color="white" clipped-right flat app>
+    <v-app-bar color="white" clipped-right flat app height="56px">
       <!-- toStart -->
-      <v-btn v-if="!is_chat || !is_nav" @click.prevent="clickToStart" icon>
+      <v-btn
+        v-show="!is_chat || !is_nav"
+        @click.prevent="clickToStart"
+        icon
+        style="margin-left: -12"
+      >
         <v-icon>mdi-chevron-double-left</v-icon>
       </v-btn>
 
       <!-- toBoard -->
       <v-btn
-        v-if="!is_board"
+        v-show="!is_board"
         @click.prevent="clickToBoard"
         icon
-        retain-focus-on-click
+        style="margin-left: -12px"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
 
       <!-- title -->
-      <v-toolbar-title class="pl-0 align-center">
+      <v-toolbar-title class="pa-0 align-center">
         <span v-if="is_board || !is_nav" class="title">HOLYBI ROOM</span>
         <span v-if="!is_nav" class="title"> | </span>
         <span v-if="!is_nav || is_chat" class="title">{{
@@ -27,14 +32,14 @@
       </v-toolbar-title>
 
       <!-- clickboard -->
-      <v-btn icon v-if="is_board || !is_nav" v-clipboard="clickClipboard">
+      <v-btn icon v-show="is_board || !is_nav" v-clipboard="clickClipboard">
         <v-icon small>mdi-content-copy</v-icon>
       </v-btn>
 
       <v-spacer />
 
       <!-- toChat -->
-      <v-btn v-if="is_nav && is_board" icon @click.prevent="clickToChat">
+      <v-btn v-show="is_nav && is_board" icon @click.prevent="clickToChat">
         <v-icon>mdi-forum</v-icon>
       </v-btn>
 
@@ -146,7 +151,7 @@ export default {
       this.is_board = true;
       this.is_chat = false;
       const link = window.document.location.search.split("&chat=true").join("");
-      this.$router.go(-1).catch(() => {});
+      this.$router.go(-1);
     },
 
     clickToChat() {
@@ -184,10 +189,9 @@ export default {
     mobile_back(value) {
       if (value) {
         this.is_nav = true;
-        if (this.is_board && this.is_chat) {
-          this.is_board = true;
-          this.is_chat = false;
-        }
+        this.is_board = true;
+        this.is_chat = false;
+
         this.$store.commit("mobile_back", false);
       }
     }
