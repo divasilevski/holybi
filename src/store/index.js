@@ -15,9 +15,13 @@ export default new Vuex.Store({
     project: undefined,
     new_project: undefined,
     last: 800,
-    drawing: false
+    drawing: false,
+    toggle: "pen"
   },
   mutations: {
+
+    toggle: (state, toggle) => (state.toggle = toggle),
+
     setMode: (state, mode) => (state.mode = mode),
 
     setUser: (state, user) => (state.user = user),

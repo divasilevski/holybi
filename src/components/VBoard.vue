@@ -1,23 +1,32 @@
 <template>
   <div v-resize="checkResize">
-    <canvas id="canvas" :style="board_size" resize="true"></canvas>
+    <canvas
+      id="canvas"
+      :style="board_size"
+      resize="true"
+      v-on:mousedown.prevent="onStart"
+      v-on:touchstart.prevent="onStart"
+      v-on:mousemove.prevent="onMove"
+      v-on:touchmove.prevent="onMove"
+      v-on:mouseup.prevent="onEnd"
+      v-on:touchend.prevent="onEnd"
+    ></canvas>
 
     <v-toolbar dense flat class="pa-0">
-      <v-btn-toggle
-        v-model="toggle"
-        class="pa-0"
-        color="primary"
-        dense
-        group
-        mandatory
+      <v-btn
+        icon
+        @click.prevent="toggle = 'pen'"
+        :color="toggle === 'pen' ? 'blue' : ''"
       >
-        <v-btn :value="'pen'">
-          <v-icon>mdi-pen</v-icon>
-        </v-btn>
-        <v-btn :value="'erase'">
-          <v-icon>mdi-eraser</v-icon>
-        </v-btn>
-      </v-btn-toggle>
+        <v-icon>mdi-pen</v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        @click.prevent="toggle = 'eraser'"
+        :color="toggle === 'eraser' ? 'blue' : ''"
+      >
+        <v-icon>mdi-eraser</v-icon>
+      </v-btn>
 
       <v-spacer></v-spacer>
 
@@ -37,9 +46,11 @@ export default {
   },
 
   data: () => ({
-    toggle: undefined,
+    toggle: "pen",
     board_size: "",
-    size: 800
+    size: 800,
+    path: undefined,
+    isDraw: false
   }),
 
   created() {
@@ -53,60 +64,65 @@ export default {
     if (this.last) store.commit("updateLast", this.size);
 
     let tool = new Tool();
-    let path;
-
-    tool.onMouseDown = event => {
-      event.preventDefault();
-
-      path = new Path();
-
-      if (this.toggle === "pen") {
-        path.strokeColor = "black";
-        path.strokeWidth = 2;
-        path.strokeCap = "round";
-        path.strokeJoin = "round";
-      } else {
-        path.strokeColor = "black";
-        path.strokeWidth = 2;
-        path.opacity = 0.2;
-      }
-    };
-
-    tool.onMouseDrag = event => {
-      event.preventDefault();
-      path.add(event.point);
-    };
-
-    tool.onMouseUp = event => {
-      event.preventDefault();
-
-      if (this.toggle === "pen") {
-        path.smooth();
-        path.simplify();
-      } else {
-        const children = project.activeLayer.children;
-        for (let i = children.length - 1; i >= 0; i--) {
-          if (path.getIntersections(children[i]).length) {
-            children[i].remove();
-          }
-        }
-        path.remove();
-      }
-
-      store.commit("newProject", project.exportJSON());
-      store.commit("updateLast", view.size.width);
-    };
   },
 
   methods: {
+    onStart() {
+      console.log("start");
+      this.path = new Path();
+      if (this.toggle === "pen") {
+        this.path.strokeColor = "black";
+        this.path.strokeWidth = 2;
+        this.path.strokeCap = "round";
+        this.path.strokeJoin = "round";
+      } else {
+        this.path.strokeColor = "black";
+        this.path.strokeWidth = 2;
+        this.path.opacity = 0.2;
+      }
+
+      this.isDraw = true;
+    },
+
+    onMove(event) {
+      if (this.isDraw) {
+        const canvas = document.getElementById("canvas");
+        const bcr = canvas.getBoundingClientRect();
+        console.log(event);
+        this.path.add(
+          new Point(
+            event.clientX - bcr.x || event.touches[0].clientX - bcr.x,
+            event.clientY - bcr.y || event.touches[0].clientY - bcr.y
+          )
+        );
+      }
+    },
+
+    onEnd() {
+      this.isDraw = false;
+      console.log("end");
+      if (this.toggle === "pen") {
+        this.path.smooth();
+        this.path.simplify();
+      } else {
+        const children = project.activeLayer.children;
+        for (let i = children.length - 1; i >= 0; i--) {
+          if (this.path.getIntersections(children[i]).length) {
+            children[i].remove();
+          }
+        }
+        this.path.remove();
+      }
+      this.$store.commit("newProject", project.exportJSON());
+      this.$store.commit("updateLast", view.size.width);
+    },
+
     reload() {
       if (this.project) {
         project.clear();
         project.importJSON(this.project);
 
         view.viewSize = new Size(this.size, this.size);
-
-        console.log("ds", this.size, view.viewSize);
 
         let scale = this.size / this.last;
 

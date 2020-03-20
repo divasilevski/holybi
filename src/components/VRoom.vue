@@ -8,7 +8,7 @@
       </v-btn>
 
       <!-- toBoard -->
-      <v-btn v-if="!is_board" @click.prevent="clickToBoard" icon>
+      <v-btn v-if="!is_board" @click.prevent="clickToBoard" icon retain-focus-on-click>
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
 
