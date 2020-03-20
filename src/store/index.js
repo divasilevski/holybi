@@ -16,9 +16,12 @@ export default new Vuex.Store({
     new_project: undefined,
     last: 800,
     drawing: false,
-    toggle: "pen"
+    toggle: "pen",
+    mobile_back: false
   },
   mutations: {
+
+    mobile_back: (state, mobile_back) => (state.mobile_back = mobile_back),
 
     toggle: (state, toggle) => (state.toggle = toggle),
 

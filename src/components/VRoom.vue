@@ -117,7 +117,7 @@ const CHANGE_STATE_WIDTH = 820;
 
 export default {
   computed: {
-    ...mapState(["user", "users"])
+    ...mapState(["user", "users", "mobile_back"])
   },
 
   data: () => ({
@@ -145,11 +145,16 @@ export default {
       this.$store.commit("drawing", true);
       this.is_board = true;
       this.is_chat = false;
+      const link = window.document.location.search.split("&chat=true").join("");
+      this.$router.go(-1).catch(() => {});
     },
 
     clickToChat() {
       this.is_board = false;
       this.is_chat = true;
+
+      const link = window.document.location.search;
+      this.$router.push(link + "&chat=true").catch(() => {});
     },
 
     clickToDrawer() {
@@ -161,12 +166,29 @@ export default {
         this.is_nav = false;
         this.is_board = true;
         this.is_chat = true;
+        const link = window.document.location.search
+          .split("&chat=true")
+          .join("");
+        this.$router.replace(link).catch(() => {});
       } else {
         this.is_nav = true;
         if (this.is_board && this.is_chat) {
           this.is_board = true;
           this.is_chat = false;
         }
+      }
+    }
+  },
+
+  watch: {
+    mobile_back(value) {
+      if (value) {
+        this.is_nav = true;
+        if (this.is_board && this.is_chat) {
+          this.is_board = true;
+          this.is_chat = false;
+        }
+        this.$store.commit("mobile_back", false);
       }
     }
   },

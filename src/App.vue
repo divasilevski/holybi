@@ -22,7 +22,9 @@ export default {
 
     this.socket.on("USER_CONNECT", () => {
       if (!this.user && this.mode === "Room") {
-        const room = window.document.location.search.replace("?id=", "");
+        const link = window.document.location.search.split("&chat=true").join("");
+        const room = this.$route.query.id;
+        this.$router.replace(link).catch(() => {});
         this.socket.emit("USER_JOINED", { room, device: this.$device });
       }
     });
@@ -87,7 +89,9 @@ export default {
     // ROOM //
     mode() {
       if (!this.user && this.mode === "Room") {
-        const room = window.document.location.search.replace("?id=", "");
+        const link = window.document.location.search.split("&chat=true").join("");
+        const room = this.$route.query.id;
+        this.$router.replace(link).catch(() => {});
         this.socket.emit("USER_JOINED", { room, device: this.$device });
       }
 
