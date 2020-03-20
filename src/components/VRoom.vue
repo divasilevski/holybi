@@ -8,7 +8,12 @@
       </v-btn>
 
       <!-- toBoard -->
-      <v-btn v-if="!is_board" @click.prevent="clickToBoard" icon retain-focus-on-click>
+      <v-btn
+        v-if="!is_board"
+        @click.prevent="clickToBoard"
+        icon
+        retain-focus-on-click
+      >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
 
@@ -137,7 +142,7 @@ export default {
     },
 
     clickToBoard() {
-      this.$store.commit("drawing", true)
+      this.$store.commit("drawing", true);
       this.is_board = true;
       this.is_chat = false;
     },
@@ -165,7 +170,6 @@ export default {
       }
     }
   },
-
   components: {
     VBoard,
     VChat

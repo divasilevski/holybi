@@ -68,7 +68,6 @@ export default {
 
   methods: {
     onStart() {
-      console.log("start");
       this.path = new Path();
       if (this.toggle === "pen") {
         this.path.strokeColor = "black";
@@ -88,7 +87,6 @@ export default {
       if (this.isDraw) {
         const canvas = document.getElementById("canvas");
         const bcr = canvas.getBoundingClientRect();
-        console.log(event);
         this.path.add(
           new Point(
             event.clientX - bcr.x || event.touches[0].clientX - bcr.x,
@@ -100,7 +98,6 @@ export default {
 
     onEnd() {
       this.isDraw = false;
-      console.log("end");
       if (this.toggle === "pen") {
         this.path.smooth();
         this.path.simplify();
