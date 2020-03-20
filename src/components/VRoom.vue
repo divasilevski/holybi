@@ -3,12 +3,22 @@
     <!-- APP BAR -->
     <v-app-bar color="white" clipped-right flat app height="56px">
       <!-- toStart -->
-      <v-btn  v-show="!is_chat || !is_nav" @click.prevent="clickToStart" icon  style="margin-left: -12">
+      <v-btn
+        v-show="!is_chat || !is_nav"
+        @click.prevent="clickToStart"
+        icon
+        style="margin-left: -12"
+      >
         <v-icon>mdi-chevron-double-left</v-icon>
       </v-btn>
 
       <!-- toBoard -->
-      <v-btn v-show="!is_board" @click.prevent="clickToBoard" icon style="margin-left: -12px">
+      <v-btn
+        v-show="!is_board"
+        @click.prevent="clickToBoard"
+        icon
+        style="margin-left: -12px"
+      >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
 
