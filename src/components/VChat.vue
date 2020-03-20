@@ -249,7 +249,7 @@ export default {
       const re = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
       let subst = (match, p) =>
-        "'<a href='" + p + " target='_blank'>" + p.slice(0, 25) + "...</a>";
+        `<a href="${p}" target="_blank">${p.slice(0, 30)}...</a>`;
 
       return message
         .split("\n")
