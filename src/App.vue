@@ -20,6 +20,15 @@ export default {
   created() {
     paper.install(window);
 
+    this.socket.on("USER_CONNECT", () => {
+      if (!this.user && this.mode === "Room") {
+        const link = window.document.location.search.split("&chat=true").join("");
+        const room = this.$route.query.id;
+        this.$router.replace(link).catch(() => {});
+        this.socket.emit("USER_JOINED", { room, device: this.$device });
+      }
+    });
+
     // LOAD APP
     if (window.document.location.search) {
       this.$store.commit("setMode", "Room");
@@ -79,8 +88,10 @@ export default {
   watch: {
     // ROOM //
     mode() {
-      if (this.mode === "Room") {
-        const room = window.document.location.search.replace("?id=", "");
+      if (!this.user && this.mode === "Room") {
+        const link = window.document.location.search.split("&chat=true").join("");
+        const room = this.$route.query.id;
+        this.$router.replace(link).catch(() => {});
         this.socket.emit("USER_JOINED", { room, device: this.$device });
       }
 
