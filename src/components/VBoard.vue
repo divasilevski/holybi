@@ -70,7 +70,7 @@ export default {
     onStart() {
       this.path = new Path();
       if (this.toggle === "pen") {
-        this.path.strokeColor = "black";
+        this.path.strokeColor = new Color("#29B6F7") //"black";
         this.path.strokeWidth = 2;
         this.path.strokeCap = "round";
         this.path.strokeJoin = "round";
@@ -166,5 +166,5 @@ export default {
 canvas[resize]
     width: 100%
     height: 100%
-    background: #E9FFFD
+    background: #EFFFFD
 </style>
