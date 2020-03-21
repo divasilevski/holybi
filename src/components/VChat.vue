@@ -22,9 +22,8 @@
           <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
       </v-fab-transition>
-    
+
       <v-img src="../assets/logo.png" contain height="152px" class="pa-10"></v-img>
-      
 
       <!-- ITERATIONS -->
       <div v-for="(m, index) in messages" :key="index + 'message_iterations'">

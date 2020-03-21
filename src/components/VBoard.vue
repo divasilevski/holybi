@@ -12,7 +12,7 @@
       v-on:touchend.prevent="onEnd"
     ></canvas>
 
-    <v-toolbar dense flat class="pa-0">
+    <v-toolbar height="36px" dense flat class="pa-0">
       <v-btn
         icon
         @click.prevent="toggle = 'pen'"
@@ -28,6 +28,36 @@
         <v-icon>mdi-eraser</v-icon>
       </v-btn>
 
+      <v-divider vertical></v-divider>
+
+      <chrome-picker
+        v-show="is_color_picker"
+        v-model="main_color"
+        disableAlpha
+        disableFields
+        class="picker"
+      />
+
+      <v-btn icon @click.prevent="setStroke">
+        <v-slider
+          v-show="is_stroke"
+          v-model="stroke_width"
+          @end="is_color_picker = false"
+          class="slider"
+          vertical
+          height="100px"
+          thumb-label
+          max="10"
+          min="1"
+        ></v-slider>
+        <v-icon small>mdi-checkbox-blank-circle-outline</v-icon>
+      </v-btn>
+      <v-btn icon @click.prevent="setColor">
+        <v-icon small :style="'color: ' + main_color.hex"
+          >mdi-checkbox-blank</v-icon
+        >
+      </v-btn>
+
       <v-spacer></v-spacer>
 
       <v-btn icon @click.prevent="clearCanvas">
@@ -39,6 +69,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { Chrome } from "vue-color";
 
 export default {
   computed: {
@@ -50,7 +81,11 @@ export default {
     board_size: "",
     size: 800,
     path: undefined,
-    isDraw: false
+    isDraw: false,
+    main_color: { hex: "#000000" },
+    is_color_picker: false,
+    stroke_width: 1,
+    is_stroke: false
   }),
 
   created() {
@@ -68,10 +103,12 @@ export default {
 
   methods: {
     onStart() {
+      this.is_stroke = false;
+      this.is_color_picker = false;
       this.path = new Path();
       if (this.toggle === "pen") {
-        this.path.strokeColor = "black";
-        this.path.strokeWidth = 2;
+        this.path.strokeColor = this.main_color.hex;
+        this.path.strokeWidth = 2 * this.stroke_width;
         this.path.strokeCap = "round";
         this.path.strokeJoin = "round";
       } else {
@@ -130,6 +167,16 @@ export default {
         }
       }
     },
+
+    setColor() {
+      this.is_stroke = false;
+      this.is_color_picker = !this.is_color_picker;
+    },
+
+    setStroke() {
+      this.is_color_picker = false;
+      this.is_stroke = !this.is_stroke;
+    },
     checkResize() {
       if (window.innerHeight - 140 < window.innerWidth) {
         this.size = window.innerHeight - 140;
@@ -158,6 +205,9 @@ export default {
         this.$store.commit("drawing", false);
       }
     }
+  },
+  components: {
+    "chrome-picker": Chrome
   }
 };
 </script>
@@ -165,5 +215,12 @@ export default {
 canvas[resize]
     width: 100%
     height: 100%
-    background: #E9FFFD
+    background: #EFFFFD
+
+.picker
+  position: fixed
+  bottom: 45px
+.slider
+  position: fixed
+  bottom: 67px
 </style>
