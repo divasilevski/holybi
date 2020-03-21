@@ -39,10 +39,23 @@
       />
 
       <v-btn icon @click.prevent="setStroke">
-        <v-icon small color="black">mdi-circle</v-icon>
+        <v-slider
+          v-show="is_stroke"
+          v-model="stroke_width"
+          @end="is_color_picker = false"
+          class="slider"
+          vertical
+          height="100px"
+          thumb-label
+          max="10"
+          min="1"
+        ></v-slider>
+        <v-icon small>mdi-checkbox-blank-circle-outline</v-icon>
       </v-btn>
       <v-btn icon @click.prevent="setColor">
-        <v-icon :style="'color: ' + main_color.hex">mdi-checkbox-blank</v-icon>
+        <v-icon small :style="'color: ' + main_color.hex"
+          >mdi-checkbox-blank</v-icon
+        >
       </v-btn>
 
       <v-spacer></v-spacer>
@@ -71,7 +84,8 @@ export default {
     isDraw: false,
     main_color: { hex: "#000000" },
     is_color_picker: false,
-    stroke_width: 2
+    stroke_width: 1,
+    is_stroke: false
   }),
 
   created() {
@@ -89,10 +103,12 @@ export default {
 
   methods: {
     onStart() {
+      this.is_stroke = false;
+      this.is_color_picker = false;
       this.path = new Path();
       if (this.toggle === "pen") {
         this.path.strokeColor = this.main_color.hex;
-        this.path.strokeWidth = this.stroke_width;
+        this.path.strokeWidth = 2 * this.stroke_width;
         this.path.strokeCap = "round";
         this.path.strokeJoin = "round";
       } else {
@@ -154,7 +170,13 @@ export default {
     },
 
     setColor() {
+      this.is_stroke = false;
       this.is_color_picker = !this.is_color_picker;
+    },
+
+    setStroke() {
+      this.is_color_picker = false;
+      this.is_stroke = !this.is_stroke;
     },
     checkResize() {
       if (window.innerHeight - 140 < window.innerWidth) {
@@ -198,5 +220,8 @@ canvas[resize]
 
 .picker
   position: fixed
-  bottom: 40px
+  bottom: 45px
+.slider
+  position: fixed
+  bottom: 67px
 </style>
