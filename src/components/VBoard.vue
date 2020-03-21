@@ -12,7 +12,7 @@
       v-on:touchend.prevent="onEnd"
     ></canvas>
 
-    <v-toolbar dense flat class="pa-0">
+    <v-toolbar height="36px" dense flat class="pa-0">
       <v-btn
         icon
         @click.prevent="toggle = 'pen'"
@@ -28,6 +28,23 @@
         <v-icon>mdi-eraser</v-icon>
       </v-btn>
 
+      <v-divider vertical></v-divider>
+
+      <chrome-picker
+        v-show="is_color_picker"
+        v-model="main_color"
+        disableAlpha
+        disableFields
+        class="picker"
+      />
+
+      <v-btn icon @click.prevent="setStroke">
+        <v-icon small color="black">mdi-circle</v-icon>
+      </v-btn>
+      <v-btn icon @click.prevent="setColor">
+        <v-icon :style="'color: ' + main_color.hex">mdi-checkbox-blank</v-icon>
+      </v-btn>
+
       <v-spacer></v-spacer>
 
       <v-btn icon @click.prevent="clearCanvas">
@@ -39,6 +56,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { Chrome } from "vue-color";
 
 export default {
   computed: {
@@ -50,7 +68,10 @@ export default {
     board_size: "",
     size: 800,
     path: undefined,
-    isDraw: false
+    isDraw: false,
+    main_color: { hex: "#000000" },
+    is_color_picker: false,
+    stroke_width: 2
   }),
 
   created() {
@@ -70,8 +91,8 @@ export default {
     onStart() {
       this.path = new Path();
       if (this.toggle === "pen") {
-        this.path.strokeColor = new Color("#29B6F7") //"black";
-        this.path.strokeWidth = 2;
+        this.path.strokeColor = this.main_color.hex;
+        this.path.strokeWidth = this.stroke_width;
         this.path.strokeCap = "round";
         this.path.strokeJoin = "round";
       } else {
@@ -131,6 +152,10 @@ export default {
         }
       }
     },
+
+    setColor() {
+      this.is_color_picker = !this.is_color_picker;
+    },
     checkResize() {
       if (window.innerHeight - 140 < window.innerWidth) {
         this.size = window.innerHeight - 140;
@@ -159,6 +184,9 @@ export default {
         this.$store.commit("drawing", false);
       }
     }
+  },
+  components: {
+    "chrome-picker": Chrome
   }
 };
 </script>
@@ -167,4 +195,8 @@ canvas[resize]
     width: 100%
     height: 100%
     background: #EFFFFD
+
+.picker
+  position: fixed
+  bottom: 40px
 </style>
