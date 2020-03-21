@@ -118,7 +118,7 @@ import VBoard from "./VBoard";
 import VChat from "./VChat";
 import { mapState } from "vuex";
 
-const CHANGE_STATE_WIDTH = 820;
+const CHANGE_STATE_WIDTH = 980;
 
 export default {
   computed: {
@@ -152,6 +152,7 @@ export default {
       this.is_chat = false;
       const link = window.document.location.search.split("&chat=true").join("");
       this.$router.go(-1);
+      this.onResize();
     },
 
     clickToChat() {
@@ -191,7 +192,7 @@ export default {
         this.is_nav = true;
         this.is_board = true;
         this.is_chat = false;
-
+        this.onResize();
         this.$store.commit("mobile_back", false);
       }
     }

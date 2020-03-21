@@ -184,8 +184,8 @@ export default {
     },
 
     checkResize() {
-      if (window.innerHeight - 140 < window.innerWidth) {
-        this.size = window.innerHeight - 140;
+      if (window.innerHeight - 110 < window.innerWidth) {
+        this.size = window.innerHeight - 110;
       } else {
         this.size = window.innerWidth;
       }
