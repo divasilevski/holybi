@@ -40,7 +40,7 @@
 
       <!-- toChat -->
       <v-btn icon v-show="is_nav && is_board" @click.prevent="clickToChat">
-        <v-badge v-if="is_new_messages" dot overlap > </v-badge>
+        <v-badge v-if="is_new_messages" dot overlap offset-x="-20px" offset-y="-9px"></v-badge>
         <v-icon>mdi-forum</v-icon>
       </v-btn>
 
@@ -99,7 +99,7 @@
 
           <!-- Chat -->
           <v-col
-            v-show="is_chat"
+            v-if="is_chat"
             class="pb-0 pt-0"
             md="5"
             :sm="is_nav ? '12' : '5'"
