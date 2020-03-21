@@ -39,7 +39,8 @@
       <v-spacer />
 
       <!-- toChat -->
-      <v-btn v-show="is_nav && is_board" icon @click.prevent="clickToChat">
+      <v-btn icon v-show="is_nav && is_board" @click.prevent="clickToChat">
+        <v-badge v-if="is_new_messages" dot overlap > </v-badge>
         <v-icon>mdi-forum</v-icon>
       </v-btn>
 
@@ -122,14 +123,15 @@ const CHANGE_STATE_WIDTH = 980;
 
 export default {
   computed: {
-    ...mapState(["user", "users", "mobile_back"])
+    ...mapState(["user", "users", "mobile_back", "messages"]),
   },
 
   data: () => ({
     drawer: false,
     is_nav: false,
     is_board: true,
-    is_chat: false
+    is_chat: false,
+    is_new_messages: false
   }),
 
   mounted() {
@@ -159,6 +161,8 @@ export default {
       this.is_board = false;
       this.is_chat = true;
 
+      this.is_new_messages = false;
+
       const link = window.document.location.search;
       this.$router.push(link + "&chat=true").catch(() => {});
     },
@@ -176,6 +180,7 @@ export default {
           .split("&chat=true")
           .join("");
         this.$router.replace(link).catch(() => {});
+        this.is_new_messages = false;
       } else {
         this.is_nav = true;
         if (this.is_board && this.is_chat) {
@@ -187,6 +192,10 @@ export default {
   },
 
   watch: {
+    messages(){
+      if (this.is_nav && this.is_board) this.is_new_messages = true;
+    },
+
     mobile_back(value) {
       if (value) {
         this.is_nav = true;
