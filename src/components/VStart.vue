@@ -1,20 +1,28 @@
-<template
-  ><v-container class="fill-height justify-center">
-    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent>
-      <v-text-field
-        v-model="room_id"
-        class="ma-5"
-        label="Комната"
-        :rules="rules"
-        hide-details="auto"
-        v-on:keyup.enter="clickEnter"
-        required
-      ></v-text-field>
+<template>
+  <div class="fill-height justify-center">
+    <p
+      class="text-center mt-7 display-4 font-weight-medium"
+      style="text-shadow: 1px 1px 2px black"
+    >
+      <v-img
+        src="../assets/logo.png"
+        contain
+        height="192px"
+        class="pa-7 pb-12"
+      ></v-img>
+      HOLYBI
+    </p>
 
-      <v-btn class="ma-5" @click="clickEnter">Войти в комнату</v-btn>
-      <v-btn class="ma-5" @click="generate">Случайная комната</v-btn>
-    </v-form>
-  </v-container>
+    <div class="d-flex justify-center mt-7">
+      <v-hover>
+        <template v-slot="{ hover }">
+          <v-btn tile color="blue" width="300px" :elevation="hover ? 10 : 2" @click="generate"
+            >Начать</v-btn
+          >
+        </template>
+      </v-hover>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -22,20 +30,9 @@ export default {
   name: "Start",
   data: () => ({
     valid: true,
-    room_id: "",
-    rules: [
-      v => !!v || "Придумайте id для комнаты",
-      v => (v && v.length <= 10) || "id превышет 10 символов"
-    ]
+    room_id: ""
   }),
   methods: {
-    clickEnter() {
-      if (this.$refs.form.validate()) {
-        this.$router.replace(`/?id=${this.room_id}`);
-        this.$store.commit("setMode", "Room");
-        console.log(`Вход в комнату ${this.room_id}`);
-      }
-    },
     generate() {
       var password = "";
       var symbols =
@@ -46,7 +43,6 @@ export default {
 
       this.$router.replace(`/?id=${password}`);
       this.$store.commit("setMode", "Room");
-      console.log(`Вход в комнату ${password}`);
     }
   }
 };

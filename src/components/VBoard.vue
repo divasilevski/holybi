@@ -38,20 +38,24 @@
         class="picker"
       />
 
+      <div v-show="is_stroke" class="slider">
+        <v-card class="d-flex justify-center" height="30px" tile>
+          <v-slider
+            class="pl-1 pr-1"
+            v-model="stroke_width"
+            thumb-label
+            max="10"
+            min="1"
+            @end="is_stroke = false"
+            validate-on-blur
+          ></v-slider>
+        </v-card>
+      </div>
+      
       <v-btn icon @click.prevent="setStroke">
-        <v-slider
-          v-show="is_stroke"
-          v-model="stroke_width"
-          @end="is_color_picker = false"
-          class="slider"
-          vertical
-          height="100px"
-          thumb-label
-          max="10"
-          min="1"
-        ></v-slider>
         <v-icon small>mdi-checkbox-blank-circle-outline</v-icon>
       </v-btn>
+
       <v-btn icon @click.prevent="setColor">
         <v-icon small :style="'color: ' + main_color.hex"
           >mdi-checkbox-blank</v-icon
@@ -177,9 +181,10 @@ export default {
       this.is_color_picker = false;
       this.is_stroke = !this.is_stroke;
     },
+
     checkResize() {
-      if (window.innerHeight - 140 < window.innerWidth) {
-        this.size = window.innerHeight - 140;
+      if (window.innerHeight - 110 < window.innerWidth) {
+        this.size = window.innerHeight - 110;
       } else {
         this.size = window.innerWidth;
       }
@@ -220,7 +225,15 @@ canvas[resize]
 .picker
   position: fixed
   bottom: 45px
+  left: 50px
 .slider
   position: fixed
-  bottom: 67px
+  width: 120px
+  bottom: 45px
+  left: 55px
+.v-slider__track-container
+  height: 4px !important
+.v-slider__thumb
+  height: 15px !important
+  width: 15px !important
 </style>

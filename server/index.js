@@ -73,40 +73,7 @@ io.on("connection", socket => {
         // 1
         if (user.king) {
           room_users[0].king = true;
-          room_users[0].messages = user.messages;
-          io.to(room_users[0].id).emit("SET_USER", room_users[0]);
-
-          room_users[0].messages.push({
-            type: "admin",
-            message: `Пользователь ${user.name} вышел!`
-          });
-          room_users[0].messages.push({
-            type: "admin",
-            message: `Да здравствует, король ${room_users[0].name}!`
-          });
-        } else {
-          room_users[0].messages.push({
-            type: "admin",
-            message: `Пользователь ${user.name} вышел!`
-          });
-        }
-        // 2
-        io.to(user.room).emit("UPDATE_USERS", room_users);
-        io.to(user.room).emit("UPDATE_MESSAGES", room_users[0].messages);
-      }
-    }
-  });
-
-  //
-  socket.on("disconnect", () => {
-    const user = users.remove(socket.id);
-
-    if (user) {
-      const room_users = users.getByRoom(user.room);
-      if (room_users.length) {
-        // 1
-        if (user.king) {
-          room_users[0].king = true;
+          room_users[0].icons.unshift({ icon: "mdi-crown" });
           room_users[0].messages = user.messages;
           room_users[0].project = user.project;
           room_users[0].last = user.last;
@@ -127,6 +94,45 @@ io.on("connection", socket => {
           });
         }
         // 2
+        io.to(room_users[0].id).emit("SET_USER", room_users[0]);
+        io.to(user.room).emit("UPDATE_USERS", room_users);
+        io.to(user.room).emit("UPDATE_MESSAGES", room_users[0].messages);
+      }
+    }
+  });
+
+  //
+  socket.on("disconnect", () => {
+    const user = users.remove(socket.id);
+
+    if (user) {
+      const room_users = users.getByRoom(user.room);
+      if (room_users.length) {
+        // 1
+        if (user.king) {
+          room_users[0].king = true;
+          room_users[0].icons.unshift({ icon: "mdi-crown" });
+          room_users[0].messages = user.messages;
+          room_users[0].project = user.project;
+          room_users[0].last = user.last;
+          io.to(room_users[0].id).emit("SET_USER", room_users[0]);
+
+          room_users[0].messages.push({
+            type: "admin",
+            message: `Пользователь ${user.name} вышел!`
+          });
+          room_users[0].messages.push({
+            type: "admin",
+            message: `Да здравствует, король ${room_users[0].name}!`
+          });
+        } else {
+          room_users[0].messages.push({
+            type: "admin",
+            message: `Пользователь ${user.name} вышел!`
+          });
+        }
+        // 2
+        io.to(room_users[0].id).emit("SET_USER", room_users[0]);
         io.to(user.room).emit("UPDATE_USERS", room_users);
         io.to(user.room).emit("UPDATE_MESSAGES", room_users[0].messages);
       }

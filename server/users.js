@@ -20,12 +20,17 @@ class Users {
     }
 
     let name;
-
-    const name_list = this.appellations[category].list;
-    while (true) {
-      name = name_list[Math.floor(Math.random() * name_list.length)];
-      if (!room_users.map(e => e.name).includes(name)) break;
+    if (room_users.length < this.appellations[category].list.length){
+      const name_list = this.appellations[category].list;
+      while (true) {
+        name = name_list[Math.floor(Math.random() * name_list.length)];
+        if (!room_users.map(e => e.name).includes(name)) break;
+      }
+    } else {
+      // Можно создать исключение и ловить
+      name = token;
     }
+    
 
     let icons = [];
     if (!room_users.length) {
