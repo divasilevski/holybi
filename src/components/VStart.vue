@@ -16,7 +16,7 @@
     <div class="d-flex justify-center mt-7">
       <v-hover>
         <template v-slot="{ hover }">
-          <v-btn tile color="blue" width="300px" :elevation="hover ? 10 : 2" @click="generate"
+          <v-btn tile color="#24b7f5" width="300px" :elevation="hover ? 10 : 2" @click="generate"
             >Начать</v-btn
           >
         </template>
