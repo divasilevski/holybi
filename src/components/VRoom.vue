@@ -145,7 +145,7 @@ export default {
 
     clickToStart() {
       this.$store.commit("setMode", "Start");
-      this.$router.replace("/");
+      this.$router.push("/");
     },
 
     clickToBoard() {
