@@ -192,6 +192,9 @@ export default {
   },
 
   watch: {
+    users(v) {
+      console.log(v)
+    },
     messages(){
       if (this.is_nav && this.is_board) this.is_new_messages = true;
     },
